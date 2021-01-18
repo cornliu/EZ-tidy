@@ -23,13 +23,6 @@ mongoose.connect(process.env.MONGO_URL, dbOptions)
     })
 const db = mongoose.connection;
 
-// const createlocation = (name, locationlist, itemlist) => {
-//     Location.create({
-//         name: name,
-//         locationlist: locationlist,
-//         items: itemlist
-//     })
-// }
 const createitem = (name, time, description, owner) => {
     const a = new Item({
         name: name,
@@ -60,51 +53,32 @@ const createlocation = (name, time, description, locationlist, itemlist) => {
 }
 
 
-// const saveUser = (id, name) => {
-//     User.countDocuments({ name }, (err, count) => {
-//         if (count)
-//             console.log(`data ${name} exists!!`);
-//         else {
-//             const user = new User({ id, name });
-//             user.save((err) => {
-//                 if (err) console.error(err);
-//                 console.log(`data ${name} saved!!!`);
-//             });
-//         }
-//     });
-// };
 
 db.once('open', () => {
     app.listen(port, () =>
         console.log(`Example app listening on port ${port}!`)
     );
 });
-
 app.use(bodyParser.json())
 app.use(cors())
 app.get('/', (req, res) => {
     res.send('Received a GET HTTP method');
 });
 app.post('/', (req, res) => {
-    // Item.deleteMany({},()=>{})
-    // Location.deleteMany({},()=>{})
-    // createitem('tea', '2020/10/11', 'cool', 'ric')
-    Item.find({}).exec((err, item)=>{
-        Location
-        .findOne({name:'K'})
-        .exec((err, loc)=>{
-            const newloc = createlocation('K2','2020', 'suck', [loc._id], [item[0]._id])
-            console.log(newloc);
-        })
-        
-    })
-    
-    Location
-    .findOne({_id:'6004200bfd074c02d401d095'})
-    .populate('itemlist locationlist')
-    .exec((err,loc)=>{
-        console.log(loc);
-    })
+    // Item.find({}).exec((err, item)=>{
+    //     Location
+    //     .findOne({name:'K'})
+    //     .exec((err, loc)=>{
+    //         const newloc = createlocation('K2','2020', 'suck', [loc._id], [item[0]._id])
+    //         console.log(newloc);
+    //     })
+    // })
+    // Location
+    // .findOne({_id:'6004200bfd074c02d401d095'})
+    // .populate('itemlist locationlist')
+    // .exec((err,loc)=>{
+    //     console.log(loc);
+    // })
     res.send('POST')
 });
 app.put('/', (req, res) => {
