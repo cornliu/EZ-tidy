@@ -30,11 +30,9 @@ const useStyles = makeStyles({
 
 export function Freezer(){
   const classes = useStyles();
-
   return (
     <div style={{ height: 800, width:"100%"}}>
       <DataGrid rows={tmp_list} columns={tmp_columns} pageSize={20} checkboxSelection />
     </div>
-
   )
 }

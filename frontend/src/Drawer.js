@@ -21,11 +21,13 @@ import { Speed, Kitchen, PeopleAltOutlined, Speaker, Build } from '@material-ui/
 
 const drawerWidth = 240;
 
-const functionList = [{text: "Overview", icon: <Speed />, path: "/overview", component: Overview}, 
-                      {text: "冰箱", icon: <Kitchen />, path: "/freezer", component: Freezer}, 
-                      {text: "器材", icon: <Speaker />, path: "/equipment", component: Equipment}, 
-                      {text: "MakerSpace", icon: <Build />, path: "/mks", component: MakerSpace},
-                      {text: "Member", icon: <PeopleAltOutlined />, path: "/member", component: Member}];
+const functionList = [
+  {text: "Overview", icon: <Speed />, path: "/overview", component: Overview}, 
+  {text: "冰箱", icon: <Kitchen />, path: "/freezer", component: Freezer}, 
+  {text: "器材", icon: <Speaker />, path: "/equipment", component: Equipment}, 
+  {text: "MakerSpace", icon: <Build />, path: "/mks", component: MakerSpace},
+  {text: "Member", icon: <PeopleAltOutlined />, path: "/member", component: Member}
+];
 
 const useStyles = makeStyles((theme) => ({
   root: {
