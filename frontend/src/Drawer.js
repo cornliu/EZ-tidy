@@ -1,33 +1,19 @@
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import { Route, Link } from "react-router-dom"
-import { Overview, Freezer, Equipment, MakerSpace, Member } from './components'
-import { Speed, Kitchen, PeopleAltOutlined, Speaker, Build } from '@material-ui/icons'
+import { 
+  Drawer, AppBar, Toolbar, List, CssBaseline, Typography, 
+  Divider, IconButton, ListItem, ListItemIcon, ListItemText 
+} from '@material-ui/core';
+import { Menu, ChevronLeft, ChevronRight, Add } from '@material-ui/icons'
+import { Link } from "react-router-dom"
+// import { sendData } from './useSend'
+import { message } from 'antd'
+import MainArea from './MainArea'
+import { functionList } from './testcases'
+
 
 const drawerWidth = 240;
-
-const functionList = [
-  {text: "Overview", icon: <Speed />, path: "/overview", component: Overview}, 
-  {text: "冰箱", icon: <Kitchen />, path: "/freezer", component: Freezer}, 
-  {text: "器材", icon: <Speaker />, path: "/equipment", component: Equipment}, 
-  {text: "MakerSpace", icon: <Build />, path: "/mks", component: MakerSpace},
-  {text: "Member", icon: <PeopleAltOutlined />, path: "/member", component: Member}
-];
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -102,6 +88,28 @@ export default function MiniDrawer() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const displayStatus = (s) => {
+    if (s.msg) {
+      const { type, msg } = s
+      const content = {
+        content: msg,
+        duration: 0.5
+      }
+
+      switch (type) {
+        case 'success':
+          message.success(content)
+          break
+        case 'info':
+          message.info(content)
+          break
+        case 'danger':
+        default:
+          message.error(content)
+          break
+      }
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -122,10 +130,10 @@ export default function MiniDrawer() {
               [classes.hide]: open,
             })}
           >
-            <MenuIcon />
+            <Menu />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Mini variant drawer
+            EZ Tidy
           </Typography>
         </Toolbar>
       </AppBar>
@@ -144,35 +152,27 @@ export default function MiniDrawer() {
       >
         <div className={classes.toolbar}>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            {theme.direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
           </IconButton>
         </div>
         <Divider />
         <List>
           {functionList.map((option, index) => (
-            <ListItem button component={Link} key={option.text} to={option.path} >
-            {/* <ListItem button key={text}> */}
+            <ListItem button component={Link} key={option.path} to={option.path} >
               <ListItemIcon>{option.icon}</ListItemIcon>
               <ListItemText primary={option.text} />
             </ListItem>
           ))}
         </List>
-        {/* <Divider />
+        <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon><MailIcon /></ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List> */}
+          <ListItem button key="add">
+            <ListItemIcon component={Link} to="/add_new_container"><Add /></ListItemIcon>
+            <ListItemText primary="Add New" />
+          </ListItem>
+        </List>
       </Drawer>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        {functionList.map((option)=>(
-          <Route path={option.path} component={option.component} />
-        ))}
-      </main>
+      <MainArea className={classes.content} />
     </div>
   );
 }

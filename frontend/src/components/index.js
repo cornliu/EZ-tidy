@@ -4,3 +4,4 @@ export {MakerSpace} from "./MakerSpace";
 export {Overview} from "./Overview";
 export {Member} from "./Member";
 export {Testtexts} from "./Testtexts";
+export {ShelfTable1} from "./ShelfTable1"
