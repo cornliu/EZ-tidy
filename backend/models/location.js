@@ -5,6 +5,7 @@ const locationSchema = new Schema({
     name: String,
     time: String,      //time that create this location
     description: String,
+    template: String,
     locationlist: [{type: Schema.Types.ObjectId, ref: 'location'}],
     itemlist: [{type: Schema.Types.ObjectId, ref: 'item'}]
 })
