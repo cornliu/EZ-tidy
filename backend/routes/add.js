@@ -82,4 +82,25 @@ router.post('/location', async (req,res)=>{
         }
     })
 })
+router.post('/user',async (req, res)=>{
+    await User.findOne({name:req.body.name}, async (err,user)=>{
+        if (err) console.error(err);
+        else if (user){
+            console.log(`${user.name} has been created!!`);
+            res.status(405).send(`${user.name} has been created!!`)
+        }
+        else{
+            const newuser = new User({
+                name: req.body.name,
+                password: req.body.password,
+                identity: req.body.admin
+            })
+            await newuser.save((err)=>{
+                if (err) console.error(err)
+                console.log(`User ${req.body.name} is saved`);
+                res.status(200).send(`User ${req.body.name} is saved`)
+            })
+        }
+    })
+})
 export default router
