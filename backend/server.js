@@ -26,9 +26,11 @@ const db = mongoose.connection;
 
 
 const createuser = async (name, password, identity) => {
-    // try{
     await User.findOne({ name: name }, async (err, someone) => {
-        if (someone) {
+        if (err) {
+            console.error(err);
+        }
+        else if (someone) {
             console.log(`User ${name} has been created!!`);
         }
         else {
@@ -45,12 +47,10 @@ const createuser = async (name, password, identity) => {
             } catch (err) {
                 console.log('err' + err);
             }
-
         }
     })
-    // }catch(err){console.log('err' + err);}
 }
-const createitem = async (name, time, description, ownername, parent) => {
+const createitem = async (name, time, description, ownername, parentpath) => {
     await User.findOne({ name: ownername }, async (err, user) => {
         // console.log(user);
         if (err) console.error(err);
@@ -67,7 +67,7 @@ const createitem = async (name, time, description, ownername, parent) => {
                 console.log(`item ${name} is saved`);
             })
 
-            Location.findOne({ name: parent }, async (err, loc) => {
+            Location.findOne({ path: parentpath }, async (err, loc) => {
                 // console.log(loc);
                 if (err) console.error(err);
                 await loc.updateOne({ itemlist: [...loc.itemlist, item._id] }, (err, ss) => {
@@ -78,26 +78,27 @@ const createitem = async (name, time, description, ownername, parent) => {
         }
     })
 }
-const createlocation = async (name, template, time, description, parent = 'root') => {
-    await Location.findOne({ name: parent }, (err, par) => {
+const createlocation = async (name, template, time, description, path, parentpath = '/') => {
+    await Location.findOne({ path: parentpath }, (err, par) => {
         if (err) console.error(err);
-        if (!par) console.log(`${parent} is not exits 76`);
+        if (!par) console.log(`${parentpath} is not exits`);
         else {
-            Location.findOne({ name: name }, async (err, location) => {
+            Location.findOne({ path: path }, async (err, location) => {
                 if (err) console.error(err);
-                else if (location) console.log(`${location} has been created`);
+                else if (location) console.log(`${location.path} has been created`);
                 else {
                     const loc = new Location({
                         name: name,
                         time: time,
                         template: template,
                         description: description,
+                        path: path,
                         locationlist: [],
                         itemlist: []
                     })
                     await loc.save((err) => {
                         if (err) console.error(err);
-                        else console.log(`${name} is created 92`);
+                        else console.log(`${name} is created`);
                     })
                     par.updateOne({ locationlist: [...par.locationlist, loc._id] }, (err, ss) => {
                         if (err) console.error(err);
@@ -116,45 +117,99 @@ db.once('open', () => {
 app.use(bodyParser.json())
 app.use(cors())
 app.get('/', async (req, res) => {
-    // try{
-    //     await createuser('ric', 'qqqq', 'admin')
-    // }catch(err){
-    //     console.log(err);
-    // }
-
     // console.log('qqq')
     // await createuser('ric', 'qqqq', 'admin')
-    // await createlocation('bl','tem1','2020','cool', 'root')
-    // await createlocation('mks','tem1','2020','cool','bl')
-    // await createitem('tea','2020','cool','ric','mks')
-    res.send('Create');
+    // await createlocation('博理','tem1','2020','cool', '/bl', '/')
+    // await createlocation('maker空間','tem1','2020','cool', '/bl/mks','/bl')
+    // await createitem('tea','2020','cool','ric','/bl/mks')
+    res.send('Createeeeee');
 });
+app.post('/additem', async (req, res) => {
+
+})
 app.post('/', (req, res) => {
-    const path = req.body.path.split('/').slice(1)
-    if (path.length === 1 && path[0] === '') {
-        Location.findOne({ name: 'root' }).populate('locationlist').exec((err, loc) => {
-            let L_list = []
-            for (let i = 0; i < loc.locationlist.length; i++) {
-                let temp = ''
-                if (loc.locationlist[i].locationlist.length > 0) {
-                    temp = 'Location'
+    const path = req.body.path
+    if (true) {
+        Location.findOne({ path: path }).populate('locationlist itemlist').exec(async (err, loc) => {
+            if (loc.locationlist.length > 0) {
+                let L_list = []
+                for (let i = 0; i < loc.locationlist.length; i++) {
+                    let temp = ''
+                    if (loc.locationlist[i].locationlist.length > 0) {
+                        temp = 'Location'
+                    }
+                    else {
+                        temp = 'ShelfTable'
+                    }
+                    let a = {
+                        title: loc.locationlist[i].name,
+                        path: loc.locationlist[i].path,
+                        description: loc.locationlist[i].description,
+                        template: temp
+                    }
+                    L_list.push(a)
                 }
-                else {
-                    temp = 'ShelfTable'
-                }
-                let a = {
-                    title: loc.locationlist[i].name,
-                    description: loc.locationlist[i].description,
-                    template: temp
-                }
-                L_list.push(a)
+                res.send({
+                    title: loc.name,
+                    locationlist: L_list,
+                    path: loc.path,
+                    itemlist: [],
+                    template: "Location"
+                })
             }
-            res.send({
-                title: loc.name,
-                locationlist: L_list,
-                itemlist: [],
-                template: "Location"
-            })
+            else if (loc.itemlist.length > 0) {
+                let I_list = []
+                for (let i = 0; i < loc.itemlist.length; i++) {
+                    await User.findOne({ _id: loc.itemlist[i].owner }, (err, u) => {
+                        let item = {
+                            id: loc.itemlist[i]._id,
+                            name: loc.itemlist[i].name,
+                            time: loc.itemlist[i].time,
+                            owner: u.name,
+                            description: loc.itemlist[i].description
+                        }
+                        I_list.push(item)
+                    })
+                }
+                res.send({
+                    title: loc.name,
+                    locationlist: [],
+                    path: loc.path,
+                    itemlist: I_list,
+                    template: "ShelfTable"
+                })
+            }
+            else {
+                res.send({
+                    title: loc.name,
+                    path: loc.path,
+                    locationlist: [],
+                    itemlist: [],
+                    template: ""
+                })
+            }
+            // let L_list = []
+            // for (let i = 0; i < loc.locationlist.length; i++) {
+            //     let temp = ''
+            //     if (loc.locationlist[i].locationlist.length > 0) {
+            //         temp = 'Location'
+            //     }
+            //     else {
+            //         temp = 'ShelfTable'
+            //     }
+            //     let a = {
+            //         title: loc.locationlist[i].name,
+            //         description: loc.locationlist[i].description,
+            //         template: temp
+            //     }
+            //     L_list.push(a)
+            // }
+            // res.send({
+            //     title: loc.name,
+            //     locationlist: L_list,
+            //     itemlist: [],
+            //     template: "Location"
+            // })
         })
     }
     else {
@@ -223,7 +278,8 @@ app.put('/', (req, res) => {
         name: 'root',
         time: 'origin',      //time that create this location
         description: 'root of all object',
-        template: '',
+        template: 'Location',
+        path: '/',
         locationlist: [],
         itemlist: []
     })
@@ -231,6 +287,7 @@ app.put('/', (req, res) => {
         if (err) console.error(err);
         else console.log('root is created');
     })
+    // createuser('ric', 'qqqq', 'admin')
     res.send('Delete All');
 });
 app.get('/1', (req, res) => {
