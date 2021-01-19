@@ -42,7 +42,7 @@ export function Location(props){
 
   useEffect(()=>{
     getData(props.path);
-  }, [props])
+  }, [props, dialogOpen])
 
   return (
     <div>
@@ -66,7 +66,11 @@ export function Location(props){
             </CardContent>
           </CardActionArea>
         </Card>
-        <AddLocationDialog ref={dialogRef} onClose={()=>{setDialogOpen(false)}} open={dialogOpen} />
+        <AddLocationDialog 
+          ref={dialogRef} 
+          onClose={()=>{setDialogOpen(false)}} 
+          open={dialogOpen} 
+          currentPath={locationData.path} />
       </div>
     </div>
   )

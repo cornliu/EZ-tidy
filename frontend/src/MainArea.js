@@ -1,8 +1,7 @@
 import { pathList } from './testcases'
 import { Route } from "react-router-dom"
 import { ShelfTable1 } from './components/ShelfTable1'
-import { AddLocation } from './components/AddLocation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Location } from './components/Location'
 import { makeStyles } from '@material-ui/core/styles';
 import { getLocationData, defaultData } from './Connection'

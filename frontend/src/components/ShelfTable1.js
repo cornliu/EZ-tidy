@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { 
   TableBody, Table, TableCell, TableContainer, TableHead, 
-  TableRow, Paper, Typography 
+  TableRow, Paper, Typography, Button 
 } from '@material-ui/core'
+import { AddItemDialog } from './AddItem';
+import { locationData_Home } from '../testcases';
 
 const defaultData = {
   title: "Loading...",
@@ -28,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
 export function ShelfTable1(props){
   const classes = useStyles();
   const [pageData, setPageData] = useState(defaultData);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogRef, setDialogRef] = useState(null)
 
   const getData = async ()=>{
     setPageData(await props.getData(props.path));
@@ -36,12 +40,17 @@ export function ShelfTable1(props){
 
   useEffect(()=>{
     getData(props.path);
-  }, [props])
+  }, [props, dialogOpen])
 
   return (
     <div>
       <div>
         <Typography variant="h3">{pageData.title}</Typography>
+        <Button onClick={()=>{setDialogOpen(true)}}>Add item</Button>
+        <AddItemDialog 
+          onClose={()=>{setDialogOpen(false)}} 
+          open={dialogOpen} 
+          currentPath={pageData.path} />
       </div>
       <TableContainer component = {Paper}>
         <Table className={classes.table}>
