@@ -37,4 +37,7 @@ router.post('/item', async (req, res) => {
         }
     })
 })
+router.post('/location', async (req,res)=>{
+
+})
 export default router

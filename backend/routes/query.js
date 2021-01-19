@@ -27,6 +27,8 @@ router.post('/', async (req, res) => {
             }
             res.send({
                 title: loc.name,
+                time: loc.time,
+                description: loc.description,
                 locationlist: L_list,
                 path: loc.path,
                 itemlist: [],
@@ -49,6 +51,8 @@ router.post('/', async (req, res) => {
             }
             res.send({
                 title: loc.name,
+                time: loc.time,
+                description: loc.description,
                 locationlist: [],
                 path: loc.path,
                 itemlist: I_list,
@@ -58,6 +62,8 @@ router.post('/', async (req, res) => {
         else {
             res.send({
                 title: loc.name,
+                time: loc.time,
+                description: loc.description,
                 path: loc.path,
                 locationlist: [],
                 itemlist: [],
