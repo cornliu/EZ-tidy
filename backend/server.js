@@ -25,52 +25,86 @@ mongoose.connect(process.env.MONGO_URL, dbOptions)
 const db = mongoose.connection;
 
 
-const createuser = (name, password, identity) => {
-    User.countDocuments({name:name}, (err, count)=>{
-        if (count) console.log(`User ${name} has been created!!`);
-        else{
+const createuser = async (name, password, identity) => {
+    // try{
+    await User.findOne({ name: name }, async (err, someone) => {
+        if (someone) {
+            console.log(`User ${name} has been created!!`);
+        }
+        else {
             const user = new User({
                 name: name,
                 password: password,
                 identity: identity
             })
-            user.save((err)=>{
-                if (err) console.error(err);
-                console.log(`User ${name} is saved`);
-            })
-            return user
+            try {
+                await user.save((err) => {
+                    if (err) console.error(err);
+                    console.log(`User ${name} is saved`);
+                })
+            } catch (err) {
+                console.log('err' + err);
+            }
+
         }
     })
+    // }catch(err){console.log('err' + err);}
 }
-const createitem = (name, time, description, owner) => {
-    const item = new Item({
-        name: name,
-        time: time,
-        description: description,
-        owner: owner
-    })
-    item.save((err) => {
-        if (err) console.error(err)
-        console.log(`item ${name} is saved`);
-    })
-    return item
-}
-const createlocation = (name, time, description, locationlist, itemlist) => {
-    Location.countDocuments({name:name}, (err, count)=>{
-        if (count) console.log(`data ${name} exit!!`);
-        else{
-            const loc = new Location({
+const createitem = async (name, time, description, ownername, parent) => {
+    await User.findOne({ name: ownername }, async (err, user) => {
+        // console.log(user);
+        if (err) console.error(err);
+        else {
+            // console.log(user._id);
+            const item = new Item({
                 name: name,
                 time: time,
                 description: description,
-                locationlist: locationlist,
-                itemlist: itemlist
+                owner: user._id
             })
-            loc.save((err) => {
-                if (err) console.log(err);
-                console.log(`location ${name} is saved`);
+            await item.save((err) => {
+                if (err) console.error(err)
+                console.log(`item ${name} is saved`);
             })
-            return loc
+
+            Location.findOne({ name: parent }, async (err, loc) => {
+                // console.log(loc);
+                if (err) console.error(err);
+                await loc.updateOne({ itemlist: [...loc.itemlist, item._id] }, (err, ss) => {
+                    if (err) console.error(err);
+                    // else console.log('success:', ss);
+                })
+            })
+        }
+    })
+}
+const createlocation = async (name, template, time, description, parent = 'root') => {
+    await Location.findOne({ name: parent }, (err, par) => {
+        if (err) console.error(err);
+        if (!par) console.log(`${parent} is not exits 76`);
+        else {
+            Location.findOne({ name: name }, async (err, location) => {
+                if (err) console.error(err);
+                else if (location) console.log(`${location} has been created`);
+                else {
+                    const loc = new Location({
+                        name: name,
+                        time: time,
+                        template: template,
+                        description: description,
+                        locationlist: [],
+                        itemlist: []
+                    })
+                    await loc.save((err) => {
+                        if (err) console.error(err);
+                        else console.log(`${name} is created 92`);
+                    })
+                    par.updateOne({ locationlist: [...par.locationlist, loc._id] }, (err, ss) => {
+                        if (err) console.error(err);
+                        // else console.log('success:', ss);
+                    })
+                }
+            })
         }
     })
 }
@@ -81,47 +115,126 @@ db.once('open', () => {
 });
 app.use(bodyParser.json())
 app.use(cors())
-app.get('/', (req, res) => {
-    let me = createuser('ric','qqqq','admin')
-    let itemid = []
-    for(let i=0;i<3;i++){
-        itemid.push(createitem(`tea${i}`, '2020/10/11', 'cool', me._id)._id)
-    }
-    let mks = createlocation('mks', '2020', 'cool', [], itemid)
-    let bl = createlocation('bl', '2020', 'cool', [mks._id], [])
-    console.log(mks);
-    console.log(bl);
+app.get('/', async (req, res) => {
+    // try{
+    //     await createuser('ric', 'qqqq', 'admin')
+    // }catch(err){
+    //     console.log(err);
+    // }
+
+    // console.log('qqq')
+    // await createuser('ric', 'qqqq', 'admin')
+    // await createlocation('bl','tem1','2020','cool', 'root')
+    // await createlocation('mks','tem1','2020','cool','bl')
+    // await createitem('tea','2020','cool','ric','mks')
     res.send('Create');
 });
 app.post('/', (req, res) => {
     const path = req.body.path.split('/').slice(1)
-    // for (let i=0;i<path.length;i++){
-    //     Location.find({name:path[i]}, (err, loc)=>{
-    //         if(loc.length === 0) res.status(404).send(`${path[i]} not found!!`)
-    //     })
-    // }
-    // res.send('POST')
-    // console.log(Location.findOne({name:path[0]}));
-    // Location.findOne({name:path[0]}).populate('locationlist itemlist').exec((err, loc)=>{
-    //     const a = loc.locationlist[0]
-    //     // console.log(a);
-    //     Location.findOne({name:a.name}).populate('locationlist itemlist').exec((err, item)=>{
-    //          console.log(item);
-    //     })
-    // })
-    Location.findOne({name:path[path.length-1]}).populate('locationlist itemlist').exec((err,loc)=>{
-        res.send(loc);
-    })
-    // res.send('POST')
+    if (path.length === 1 && path[0] === '') {
+        Location.findOne({ name: 'root' }).populate('locationlist').exec((err, loc) => {
+            let L_list = []
+            for (let i = 0; i < loc.locationlist.length; i++) {
+                let temp = ''
+                if (loc.locationlist[i].locationlist.length > 0) {
+                    temp = 'Location'
+                }
+                else {
+                    temp = 'ShelfTable'
+                }
+                let a = {
+                    title: loc.locationlist[i].name,
+                    description: loc.locationlist[i].description,
+                    template: temp
+                }
+                L_list.push(a)
+            }
+            res.send({
+                title: loc.name,
+                locationlist: L_list,
+                itemlist: [],
+                template: "Location"
+            })
+        })
+    }
+    else {
+        Location.findOne({ name: path[path.length - 1] }).populate('locationlist itemlist owner').exec(async (err, loc) => {
+            if (loc.locationlist.length > 0) {
+                let L_list = []
+                for (let i = 0; i < loc.locationlist.length; i++) {
+                    let temp = ''
+                    if (loc.locationlist[i].locationlist.length > 0) {
+                        temp = 'Location'
+                    }
+                    else {
+                        temp = 'ShelfTable'
+                    }
+                    let a = {
+                        title: loc.locationlist[i].name,
+                        description: loc.locationlist[i].description,
+                        template: temp
+                    }
+                    L_list.push(a)
+                }
+                res.send({
+                    title: loc.name,
+                    locationlist: L_list,
+                    itemlist: [],
+                    template: "Location"
+                })
+            }
+            else if (loc.itemlist.length > 0) {
+                let I_list = []
+                for (let i = 0; i < loc.itemlist.length; i++) {
+                    await User.findOne({ _id: loc.itemlist[i].owner }, (err, u) => {
+                        let item = {
+                            id: loc.itemlist[i]._id,
+                            name: loc.itemlist[i].name,
+                            time: loc.itemlist[i].time,
+                            owner: u.name,
+                            description: loc.itemlist[i].description
+                        }
+                        I_list.push(item)
+                    })
+                }
+                res.send({
+                    title: loc.name,
+                    locationlist: [],
+                    itemlist: I_list,
+                    template: "ShelfTable"
+                })
+            }
+            else {
+                res.send({
+                    title: loc.name,
+                    locationlist: [],
+                    itemlist: [],
+                    template: ""
+                })
+            }
+        })
+    }
 });
 app.put('/', (req, res) => {
-    Item.remove({},()=>console.log('All Items have been removed'))
-    Location.remove({},()=>console.log('All Locations have been removed'))
-    User.remove({},()=>console.log('All Users have been removed'))
+    Item.remove({}, () => console.log('All Items have been removed'))
+    Location.remove({}, () => console.log('All Locations have been removed'))
+    User.remove({}, () => console.log('All Users have been removed'))
+    const item = new Location({
+        name: 'root',
+        time: 'origin',      //time that create this location
+        description: 'root of all object',
+        template: '',
+        locationlist: [],
+        itemlist: []
+    })
+    item.save((err) => {
+        if (err) console.error(err);
+        else console.log('root is created');
+    })
     res.send('Delete All');
 });
 app.get('/1', (req, res) => {
-    Location.countDocuments({name:'ms'}, (err, count)=>{
+    Location.countDocuments({ name: 'ms' }, (err, count) => {
         if (count) console.log('exit!!');
     })
     res.send('Received a DELETE HTTP method');
