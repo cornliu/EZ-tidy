@@ -17,7 +17,7 @@ import { message ,Button ,Input } from 'antd'
 import MainArea from './MainArea'
 import { pathList } from './testcases'
 import PropTypes from 'prop-types';
-import { UserAvatar } from './login';
+// import { UserAvatar } from './login';
 
 
 import { defaultData, getLocationData } from './Connection';
@@ -163,7 +163,7 @@ export default function MiniDrawer() {
           <Typography variant="h6" noWrap>
             EZ Tidy
           </Typography>
-          <UserAvatar style="float:right" setLogin={setLogin}/>
+          {/* <UserAvatar style="float:right" setLogin={setLogin}/> */}
         </Toolbar>
       </AppBar>
       <Drawer

@@ -10,7 +10,7 @@ export const defaultData = {
   locationlist: [],
   itemlist: [],
   path: "/loading",
-  template: "Loading"
+  template: ""
 }
 
 export const getLocationData = async (path) => {

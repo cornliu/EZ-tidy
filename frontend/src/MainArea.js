@@ -7,6 +7,7 @@ import { Overview } from './components'
 import { Container } from '@material-ui/core'
 import { Location } from './components/Location'
 import { makeStyles } from '@material-ui/core/styles';
+import { defaultData, getLocationData } from './Connection'
 
 const useStyles = makeStyles((theme) => ({
   root: {
