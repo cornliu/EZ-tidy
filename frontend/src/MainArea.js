@@ -1,5 +1,5 @@
-import { functionList, tmp_list } from './testcases'
-import { Route } from "react-router-dom"
+import { locationData, locationData_MKS, locationData_Freezer, pathList } from './testcases'
+import { Redirect, Route } from "react-router-dom"
 import { message } from 'antd'
 import { ShelfTable1 } from './components/ShelfTable1'
 import { useState } from 'react'
@@ -28,28 +28,30 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function MainArea(){
-  const [pathlist, setPathlist] = useState(functionList.locationlist)
+  const [pathlist, setPathlist] = useState(pathList)
   const classes = useStyles();
+  
 
   return (
     <div className={classes.content}>
       <div className={classes.toolbar} />
-      <h1>This is Title</h1>
-      <Route exact path="/">
-        <ShelfTable1 item_list={tmp_list} path="/" />
+      {/* <h1>This is Title</h1> */}
+      <Route path="/">
+        <Redirect to="/home" />
       </Route>
+      {/* <Route exact path="/" /> */}
       {pathlist.map((option, index)=>(
         option.template === "Overview" ? (
           <Route exact key={index} path={option.path} title={option.title}>
-            <Overview item_list={tmp_list} path={option.path}/>
+            <Overview path={option.path}/>
           </Route>
         ): option.template === "ShelfTable"? (
           <Route exact key={index} path={option.path} title={option.title}>
-            <ShelfTable1 item_list={tmp_list} path={option.path}/>
+            <ShelfTable1 path={option.path}/>
           </Route>
-        ): option.template === "Container"? (
+        ): option.template === "Location"? (
           <Route exact key={index} path={option.path} title={option.title}>
-            <Location item_list={tmp_list} path={option.path}/>
+            <Location path={option.path}/>
           </Route>
         ): (
           <p>Unrecognize template.</p>

@@ -1,3 +1,7 @@
+// 網頁的模板
+// 包括AppBar及SideMenu
+// 主要內容在MainArea中
+
 import React from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -10,7 +14,7 @@ import { Link } from "react-router-dom"
 // import { sendData } from './useSend'
 import { message } from 'antd'
 import MainArea from './MainArea'
-import { functionList } from './testcases'
+import { functionList, pathList } from './testcases'
 
 
 const drawerWidth = 240;
@@ -157,7 +161,7 @@ export default function MiniDrawer() {
         </div>
         <Divider />
         <List>
-          {functionList.locationlist.map((option, index) => (
+          {pathList.map((option) => (
             <ListItem button component={Link} key={option.path} to={option.path} >
               <ListItemIcon>{option.icon}</ListItemIcon>
               <ListItemText primary={option.text} />

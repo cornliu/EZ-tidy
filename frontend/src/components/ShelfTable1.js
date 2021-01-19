@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { TableBody, Table, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core'
 import axios from 'axios'
+import { locationData_Freezer } from '../testcases'
 
 // let tmp_columns = [
 //   { field: "id", headerName: "ID", minWidth: 70 },
@@ -52,7 +53,7 @@ export function ShelfTable1(props){
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.item_list.map((row, index)=>(
+          {locationData_Freezer.itemList.map((row, index)=>(
             <TableRow  key={index}>
               <TableCell>{row.item_name}</TableCell>
               <TableCell align="right">{row.store_time}</TableCell>

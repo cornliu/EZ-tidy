@@ -18,8 +18,6 @@ export function MakerSpace(){
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <p>MakerSpace</p>
-    </div>
+    <div>施工中</div>
   )
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
+import { TableBody, Table, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core'
 
 let tmp_columns = [
   { field: "id", headerName: "ID", minWidth: 70 },
