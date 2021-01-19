@@ -9,6 +9,7 @@ import dotenv from 'dotenv-defaults'
 import Addrouter from './routes/add.js'
 import Removerouter from './routes/remove.js'
 import Queryrouter from './routes/query.js'
+import Checkrouter from './routes/accountcheck.js'
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000
@@ -124,6 +125,7 @@ app.get('/', async (req, res) => {
 app.use('/add', Addrouter)
 app.use('/query', Queryrouter)
 app.use('/remove', Removerouter);
+app.use('/check', Checkrouter)
 db.once('open', () => {
     app.listen(port, () =>
         console.log(`Example app listening on port ${port}!`)
