@@ -121,7 +121,10 @@ app.get('/', async (req, res) => {
     // await createlocation('博理','tem1','2020','cool', '/bl', '/')
     // await createlocation('maker空間','tem1','2020','cool', '/bl/mks','/bl')
     // await createitem('tea','2020','cool','ric','/bl/mks')
-    Location.find({path:'/bl/shelf'}).populate('locationlist itemlist').exec((err,qq)=>{
+    // Location.find({path:'/bl/shelf'}).populate('locationlist itemlist').exec((err,qq)=>{
+    //     console.log(qq);
+    // })
+    Location.findOne({path:'/bl/k'}).exec((err,qq)=>{
         console.log(qq);
     })
     res.send('Createeeeee');

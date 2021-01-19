@@ -5,18 +5,15 @@ import User from '../models/user.js'
 const router = express.Router()
 router.post('/', async (req, res) => {
     const path = req.body.path
-    Location.findOne({ path: path }).populate('locationlist itemlist').exec(async (err, loc) => {
+    await Location.findOne({ path: path }).populate('locationlist itemlist').exec(async (err, loc) => {
         if (!loc) res.status(404).send(`Path ${path} does not exist!!`)
         else if (loc.locationlist.length > 0) {
             let L_list = []
             for (let i = 0; i < loc.locationlist.length; i++) {
                 let temp = ''
-                if (loc.locationlist[i].locationlist.length > 0) {
-                    temp = 'Location'
-                }
-                else {
-                    temp = 'ShelfTable'
-                }
+                if (loc.locationlist[i].locationlist.length > 0) temp = 'Location'
+                else if(loc.locationlist[i].itemlist.length > 0) temp = 'ShelfTable'
+                else temp = 'Empty'
                 let a = {
                     title: loc.locationlist[i].name,
                     path: loc.locationlist[i].path,
@@ -67,7 +64,7 @@ router.post('/', async (req, res) => {
                 path: loc.path,
                 locationlist: [],
                 itemlist: [],
-                template: ""
+                template: "Empty"
             })
         }
     })

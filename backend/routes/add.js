@@ -30,10 +30,10 @@ router.post('/item', async (req, res) => {
                     })
                     await item.save((err) => {
                         if (err) console.error(err)
-                        console.log(`item ${req.body.name} is saved`);
+                        console.log(`item ${item._id} is saved`);
                         res.status(200).send(`item ${req.body.name} is saved`)
                     })
-                    await loc.update({ itemlist: [...loc.itemlist, item._id], template: "ShelfTable"}, (err, ss) => {
+                    await loc.updateOne({ itemlist: [...loc.itemlist, item._id], template: "ShelfTable"}, (err, ss) => {
                         if (err) console.error(err);
                     })
                 }
@@ -74,7 +74,7 @@ router.post('/location', async (req,res)=>{
                         console.log(`${req.body.title} is created`);
                         res.status(200).send(`Location ${req.body.title} is saved`)
                     })
-                    par.update({ locationlist: [...par.locationlist, loc._id],template: "Location" }, (err, ss) => {
+                    par.updateOne({ locationlist: [...par.locationlist, loc._id],template: "Location" }, (err, ss) => {
                         if (err) console.error(err);
                     })
                 }
