@@ -7,14 +7,21 @@ import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { 
   Drawer, AppBar, Toolbar, List, CssBaseline, Typography, 
-  Divider, IconButton, ListItem, ListItemIcon, ListItemText 
+  Divider, IconButton, ListItem, ListItemIcon, ListItemText ,
+  Avatar, DialogTitle, Dialog, ListItemAvatar, 
 } from '@material-ui/core';
 import { Menu, ChevronLeft, ChevronRight, Add, Home, Room, FormatListNumbered, Error } from '@material-ui/icons'
-import { Link } from "react-router-dom"
+import { Link, Switch, Route } from "react-router-dom"
 // import { sendData } from './useSend'
-import { message } from 'antd'
+import { message ,Button ,Input } from 'antd'
 import MainArea from './MainArea'
+import { pathList } from './testcases'
+import PropTypes from 'prop-types';
+// import { UserAvatar } from './login';
+
+
 import { defaultData, getLocationData } from './Connection';
+import { Location } from './components';
 // import { pathList } from './testcases'
 
 const drawerWidth = 240;
@@ -156,6 +163,7 @@ export default function MiniDrawer() {
           <Typography variant="h6" noWrap>
             EZ Tidy
           </Typography>
+          {/* <UserAvatar style="float:right" setLogin={setLogin}/> */}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -199,15 +207,20 @@ export default function MiniDrawer() {
             </ListItem>
           ))}
         </List>
-        {/* <Divider />
-        <List>
-          <ListItem button key="addlocation" component={Link} to="/addlocation">
-            <ListItemIcon><Add /></ListItemIcon>
-            <ListItemText primary="Add New" />
-          </ListItem>
-        </List> */}
       </Drawer>
-      <MainArea className={classes.content} />
+      <Switch>
+        <Route exact path="/">
+          <div className={classes.content}>
+            <div className={classes.toolbar} />
+            <Location path="/" getData={getLocationData} />
+          </div>
+        </Route>
+        <Route path="/:currentPath" children={
+          <MainArea className={classes.content} />
+        } />
+      </Switch>
     </div>
   );
 }
+
+

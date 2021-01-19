@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { 
   Dialog, TextField, DialogTitle,
-  List, ListItem, InputAdornment, Button, DialogActions
+  List, ListItem, Button, DialogActions
 } from '@material-ui/core';
-import { addLocationToServer } from '../Connection'
+import { addItemToServer } from '../Connection'
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -18,11 +18,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export function AddLocationDialog(props){
-  const { onClose, open } = props;
-  const currentPath = (props.currentPath === "/")? ("") : (props.currentPath);
-  const [title, setTitle] = useState("");
-  const [subpath, setSubPath] = useState("");
+export function AddItemDialog(props){
+  const { onClose, open, currentPath } = props;
+  const [name, setName] = useState("");
+  const [owner, setOwner] = useState("ric");
   const [discription, setDiscription] = useState("");
   const classes = useStyles();
 
@@ -33,16 +32,15 @@ export function AddLocationDialog(props){
   }
 
   const handleConfirm = async ()=>{
-    const location = {
-      title: title, 
-      path: currentPath + "/" + subpath,
-      discription: discription,
-      template: "",
+    const item = {
+      name: name, 
+      path: currentPath,
+      owner: owner,
       time: getTimeString(),
-      parentpath: currentPath===""? "/":currentPath
+      discription: discription
     };
-    console.log(location);
-    console.log(await addLocationToServer(location));
+    console.log(item);
+    console.log(await addItemToServer(item));
     onClose();
   }
 
@@ -51,16 +49,7 @@ export function AddLocationDialog(props){
       <DialogTitle id="addlocation">Add Location Here!</DialogTitle>
       <List>
         <ListItem>
-          <TextField fullWidth id="title" label="Title" onChange={(event)=>{setTitle(event.target.value)}} />
-        </ListItem>
-        <ListItem>
-          <TextField 
-            id="path" 
-            label="Path" 
-            onChange={(event)=>{setSubPath(event.target.value)}} 
-            InputProps={{
-              startAdornment: <InputAdornment position="start">{currentPath + "/"}</InputAdornment>
-            }} />
+          <TextField fullWidth id="name" label="Name" onChange={(event)=>{setName(event.target.value)}} />
         </ListItem>
         <ListItem>
           <TextField 
@@ -75,7 +64,7 @@ export function AddLocationDialog(props){
         <Button 
           onClick={()=>{handleConfirm()}} 
           color="primary"
-          >Confirm</Button>
+          >Add</Button>
       </DialogActions>
     </Dialog>
   )

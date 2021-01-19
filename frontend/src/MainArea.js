@@ -1,11 +1,13 @@
-import { pathList } from './testcases'
-import { Route } from "react-router-dom"
+import { locationData, locationData_MKS, locationData_Freezer, pathList } from './testcases'
+import { Redirect, Route, Switch, useParams } from "react-router-dom"
+import { message } from 'antd'
 import { ShelfTable1 } from './components/ShelfTable1'
-import { AddLocation } from './components/AddLocation'
 import { useEffect, useState } from 'react'
+import { Overview } from './components'
+import { Container } from '@material-ui/core'
 import { Location } from './components/Location'
 import { makeStyles } from '@material-ui/core/styles';
-import { getLocationData, defaultData } from './Connection'
+import { defaultData, getLocationData } from './Connection'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,46 +27,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MainArea(){
-  const [pathlist, setPathlist] = useState(pathList)
+export default function MainArea() {
   const classes = useStyles();
-  const [path, setPath] = useState("")
-  const [locationData, setLocationData] = useState(defaultData);
-  // const getLocationData = async (path) => {
-  //   const {data} = await instance.post("/", {path: path});
-  //   if (data.title){
-  //     return data;
-  //   }
-  //   else{
-  //     console.log("Data request Error!");
-  //     console.log(data);
-  //     return defaultData;
-  //   }
-  // }
+  const { currentPath } = useParams();
+  const [pageData, setPageData] = useState(defaultData);
 
-  // useEffect(()=>{
-  //   setLocationData(getLocationData("/"));
-  // }, [])
+  const updatePageData = async (path) => {
+    console.log("Getting Data for path:", "/" + path)
+    setPageData(await getLocationData("/" + path));
+    console.log(pageData.locationlist)
+  }
+
+  useEffect(() => {
+    updatePageData(currentPath)
+  }, [currentPath])
 
   return (
     <div className={classes.content}>
       <div className={classes.toolbar} />
-      {pathlist.map((option, index)=>(
+      {pageData.template === "Location" ? (
+        <Location path={"/" + currentPath} getData={getLocationData} />
+      ) : pageData.template === "ShelfTable" ? (
+        <ShelfTable1 path={"/" + currentPath} getData={getLocationData} />
+      ) : (
+            <p>Unrecognize template.</p>
+          )}
+      {/* {pageData.locationlist.map((option)=>(
         option.template === "ShelfTable"? (
-          <Route exact key={index} path={option.path} title={option.title}>
-            <ShelfTable1 path={option.path} getData={getLocationData}/>
+          <Route exact key={option.path} path={option.path} >
+            <ShelfTable1 path={option.path} getData={getLocationData} />
           </Route>
         ): option.template === "Location"? (
-          <Route exact key={index} path={option.path} title={option.title}>
-            <Location path={option.path} getData={getLocationData}/>
+          <Route exact key={option.path} path={option.path} >
+            <Location path={option.path} getData={getLocationData} />
           </Route>
         ): (
           <p>Unrecognize template.</p>
         )
-      ))}
-      {/* <Route exact key="addlocation" path="/addlocation">
-        <AddLocation />
-      </Route> */}
+      ))} */}
     </div>
   )
 }
+
+// function Child() {
+//   let { path } = useParam();
+
+//   useEffect(()=>{
+//     getLocationData(path);
+//   })
+// }

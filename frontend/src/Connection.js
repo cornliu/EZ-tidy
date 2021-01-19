@@ -14,7 +14,7 @@ export const defaultData = {
 }
 
 export const getLocationData = async (path) => {
-  const {data} = await instance.post("/", {path: path});
+  const {data} = await instance.post("/query", {path: path});
   if (data.title){
     return data;
   }
@@ -23,4 +23,16 @@ export const getLocationData = async (path) => {
     console.log(data);
     return defaultData;
   }
+}
+
+export const addItemToServer = async (item) =>{
+  const {data} = await instance.post("/add/item", item);
+  console.log(data);
+  return data
+}
+
+export const addLocationToServer = async (location) =>{
+  const {data} = await instance.post("/add/location", location);
+  console.log(data);
+  return data
 }
