@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { TableBody, Table, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core'
 import axios from 'axios'
@@ -6,16 +6,25 @@ import { locationData_Freezer } from '../testcases'
 
 // let tmp_columns = [
 //   { field: "id", headerName: "ID", minWidth: 70 },
-//   { field: "item_name", headerName: "Item", minWidth: 150 },
-//   { field: "store_time", headerName: "Since", minWidth: 100, align: "right" },
+//   { field: "name", headerName: "Item", minWidth: 150 },
+//   { field: "time", headerName: "Since", minWidth: 100, align: "right" },
 //   { fleld: "location", headerName: "Location", minWidth: 150, align: "right" },
 //   { field: "owner", headerName: "Owner", minWidth: 100 }
 // ]
 
-const API_ROOT = 'http://localhost:4000/'
-const instance = axios.create({
-  baseURL: API_ROOT
-})
+const defaultData = {
+  title: "Loading...",
+  locationList: [],
+  itemList: [],
+  path: "/loading",
+  template: "ShelfTable"
+}
+
+
+// const API_ROOT = 'http://localhost:4000/'
+// const instance = axios.create({
+//   baseURL: API_ROOT
+// })
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,15 +39,30 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function ShelfTable1(props){
-  const [pageData, setPageData] = useState([])
+  // const [pageData, setPageData] = useState([])
   const classes = useStyles();
+  const [locationData, setLocationData ] = useState(defaultData);
 
-  const getData = async ()=>{
+  const getData = ()=>{
+    // console.log(props.path);
+    // const data = await instance.post(props.path)
+    // console.log(data);
+    // // return data
     console.log(props.path);
-    const data = await instance.post(props.path)
-    console.log(data);
-    // return data
+    switch (props.path) {
+      case "/freezer":
+        setLocationData(locationData_Freezer);
+        break;
+      default:
+        setLocationData(locationData_Freezer);
+        console.log("Error! locationData Not found.")
+        break;
+    }
   }
+
+  useEffect(()=>{
+    getData();
+  }, [props.path, getData])
 
   return (
     <TableContainer component = {Paper}>
@@ -53,10 +77,10 @@ export function ShelfTable1(props){
           </TableRow>
         </TableHead>
         <TableBody>
-          {locationData_Freezer.itemList.map((row, index)=>(
+          {locationData.itemList.map((row, index)=>(
             <TableRow  key={index}>
-              <TableCell>{row.item_name}</TableCell>
-              <TableCell align="right">{row.store_time}</TableCell>
+              <TableCell>{row.name}</TableCell>
+              <TableCell align="right">{row.time}</TableCell>
               <TableCell align="right">{row.owner}</TableCell>
             </TableRow>
           ))}

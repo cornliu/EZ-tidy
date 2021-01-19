@@ -14,7 +14,7 @@ import { Link } from "react-router-dom"
 // import { sendData } from './useSend'
 import { message } from 'antd'
 import MainArea from './MainArea'
-import { functionList, pathList } from './testcases'
+import { pathList } from './testcases'
 
 
 const drawerWidth = 240;

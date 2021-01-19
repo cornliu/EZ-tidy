@@ -36,7 +36,7 @@ export default function MainArea(){
     <div className={classes.content}>
       <div className={classes.toolbar} />
       {/* <h1>This is Title</h1> */}
-      <Route path="/">
+      <Route exact path="/">
         <Redirect to="/home" />
       </Route>
       {/* <Route exact path="/" /> */}
