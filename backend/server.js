@@ -6,6 +6,9 @@ import Item from './models/item.js'
 import Location from './models/location.js'
 import User from './models/user.js'
 import dotenv from 'dotenv-defaults'
+import Addrouter from './routes/add.js'
+import Removerouter from './routes/remove.js'
+import Queryrouter from './routes/query.js'
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000
@@ -109,11 +112,7 @@ const createlocation = async (name, template, time, description, path, parentpat
         }
     })
 }
-db.once('open', () => {
-    app.listen(port, () =>
-        console.log(`Example app listening on port ${port}!`)
-    );
-});
+
 app.use(bodyParser.json())
 app.use(cors())
 app.get('/', async (req, res) => {
@@ -124,94 +123,11 @@ app.get('/', async (req, res) => {
     // await createitem('tea','2020','cool','ric','/bl/mks')
     res.send('Createeeeee');
 });
-app.post('/additem', async (req, res) => {
-
-})
-app.post('/', (req, res) => {
-    const path = req.body.path
-    Location.findOne({ path: path }).populate('locationlist itemlist').exec(async (err, loc) => {
-        if (loc.locationlist.length > 0) {
-            let L_list = []
-            for (let i = 0; i < loc.locationlist.length; i++) {
-                let temp = ''
-                if (loc.locationlist[i].locationlist.length > 0) {
-                    temp = 'Location'
-                }
-                else {
-                    temp = 'ShelfTable'
-                }
-                let a = {
-                    title: loc.locationlist[i].name,
-                    path: loc.locationlist[i].path,
-                    description: loc.locationlist[i].description,
-                    template: temp
-                }
-                L_list.push(a)
-            }
-            res.send({
-                title: loc.name,
-                locationlist: L_list,
-                path: loc.path,
-                itemlist: [],
-                template: "Location"
-            })
-        }
-        else if (loc.itemlist.length > 0) {
-            let I_list = []
-            for (let i = 0; i < loc.itemlist.length; i++) {
-                await User.findOne({ _id: loc.itemlist[i].owner }, (err, u) => {
-                    let item = {
-                        id: loc.itemlist[i]._id,
-                        name: loc.itemlist[i].name,
-                        time: loc.itemlist[i].time,
-                        owner: u.name,
-                        description: loc.itemlist[i].description
-                    }
-                    I_list.push(item)
-                })
-            }
-            res.send({
-                title: loc.name,
-                locationlist: [],
-                path: loc.path,
-                itemlist: I_list,
-                template: "ShelfTable"
-            })
-        }
-        else {
-            res.send({
-                title: loc.name,
-                path: loc.path,
-                locationlist: [],
-                itemlist: [],
-                template: ""
-            })
-        }
-    })
-});
-app.put('/', (req, res) => {
-    Item.remove({}, () => console.log('All Items have been removed'))
-    Location.remove({}, () => console.log('All Locations have been removed'))
-    User.remove({}, () => console.log('All Users have been removed'))
-    const item = new Location({
-        name: 'root',
-        time: 'origin',      //time that create this location
-        description: 'root of all object',
-        template: 'Location',
-        path: '/',
-        locationlist: [],
-        itemlist: []
-    })
-    item.save((err) => {
-        if (err) console.error(err);
-        else console.log('root is created');
-    })
-    // createuser('ric', 'qqqq', 'admin')
-    res.send('Delete All');
-});
-app.get('/1', (req, res) => {
-    Location.countDocuments({ name: 'ms' }, (err, count) => {
-        if (count) console.log('exit!!');
-    })
-    res.send('Received a DELETE HTTP method');
+app.use('/add', Addrouter)
+app.use('/query', Queryrouter)
+app.use('/remove', Removerouter);
+db.once('open', () => {
+    app.listen(port, () =>
+        console.log(`Example app listening on port ${port}!`)
+    );
 });
