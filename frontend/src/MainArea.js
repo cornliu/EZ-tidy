@@ -1,8 +1,8 @@
 import { locationData, locationData_MKS, locationData_Freezer, pathList } from './testcases'
-import { Redirect, Route } from "react-router-dom"
+import { Redirect, Route, Switch, useParams } from "react-router-dom"
 import { message } from 'antd'
 import { ShelfTable1 } from './components/ShelfTable1'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Overview } from './components'
 import { Container } from '@material-ui/core'
 import { Location } from './components/Location'
@@ -26,37 +26,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-export default function MainArea(){
-  const [pathlist, setPathlist] = useState(pathList)
+export default function MainArea() {
   const classes = useStyles();
-  
+  const { currentPath } = useParams();
+  const [pageData, setPageData] = useState(defaultData);
+
+  const updatePageData = async (path) => {
+    console.log("Getting Data for path:", "/" + path)
+    setPageData(await getLocationData("/" + path));
+    console.log(pageData.locationlist)
+  }
+
+  useEffect(() => {
+    updatePageData(currentPath)
+  }, [currentPath])
 
   return (
     <div className={classes.content}>
       <div className={classes.toolbar} />
-      {/* <h1>This is Title</h1> */}
-      <Route path="/">
-        <Redirect to="/home" />
-      </Route>
-      {/* <Route exact path="/" /> */}
-      {pathlist.map((option, index)=>(
-        option.template === "Overview" ? (
-          <Route exact key={index} path={option.path} title={option.title}>
-            <Overview path={option.path}/>
-          </Route>
-        ): option.template === "ShelfTable"? (
-          <Route exact key={index} path={option.path} title={option.title}>
-            <ShelfTable1 path={option.path}/>
+      {pageData.template === "Location" ? (
+        <Location path={"/" + currentPath} getData={getLocationData} />
+      ) : pageData.template === "ShelfTable" ? (
+        <ShelfTable1 path={"/" + currentPath} getData={getLocationData} />
+      ) : (
+            <p>Unrecognize template.</p>
+          )}
+      {/* {pageData.locationlist.map((option)=>(
+        option.template === "ShelfTable"? (
+          <Route exact key={option.path} path={option.path} >
+            <ShelfTable1 path={option.path} getData={getLocationData} />
           </Route>
         ): option.template === "Location"? (
-          <Route exact key={index} path={option.path} title={option.title}>
-            <Location path={option.path}/>
+          <Route exact key={option.path} path={option.path} >
+            <Location path={option.path} getData={getLocationData} />
           </Route>
         ): (
           <p>Unrecognize template.</p>
         )
-      ))}
+      ))} */}
     </div>
   )
 }
+
+// function Child() {
+//   let { path } = useParam();
+
+//   useEffect(()=>{
+//     getLocationData(path);
+//   })
+// }
