@@ -63,7 +63,7 @@ router.post('/location', async (req,res)=>{
                     const loc = new Location({
                         name: req.body.title,
                         time: req.body.time,
-                        template: req.body.template,
+                        template: 'Empty',
                         description: req.body.description,
                         path: req.body.path,
                         locationlist: [],

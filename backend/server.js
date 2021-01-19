@@ -116,18 +116,10 @@ const createlocation = async (name, template, time, description, path, parentpat
 app.use(bodyParser.json())
 app.use(cors())
 app.get('/', async (req, res) => {
-    // console.log('qqq')
-    // await createuser('ric', 'qqqq', 'admin')
-    // await createlocation('博理','tem1','2020','cool', '/bl', '/')
-    // await createlocation('maker空間','tem1','2020','cool', '/bl/mks','/bl')
-    // await createitem('tea','2020','cool','ric','/bl/mks')
-    // Location.find({path:'/bl/shelf'}).populate('locationlist itemlist').exec((err,qq)=>{
-    //     console.log(qq);
-    // })
-    Location.findOne({path:'/bl/k'}).exec((err,qq)=>{
+    Location.findOne({path:'/bl'}).exec((err,qq)=>{
         console.log(qq);
     })
-    res.send('Createeeeee');
+    res.send('Create');
 });
 app.use('/add', Addrouter)
 app.use('/query', Queryrouter)

@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
                     title: loc.locationlist[i].name,
                     path: loc.locationlist[i].path,
                     description: loc.locationlist[i].description,
-                    template: temp
+                    template: loc.locationlist[i].template
                 }
                 L_list.push(a)
             }
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
                 locationlist: L_list,
                 path: loc.path,
                 itemlist: [],
-                template: "Location"
+                template: loc.template
             })
         }
         else if (loc.itemlist.length > 0) {
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
                 locationlist: [],
                 path: loc.path,
                 itemlist: I_list,
-                template: "ShelfTable"
+                template: loc.template
             })
         }
         else {
@@ -64,7 +64,7 @@ router.post('/', async (req, res) => {
                 path: loc.path,
                 locationlist: [],
                 itemlist: [],
-                template: "Empty"
+                template: loc.template
             })
         }
     })
