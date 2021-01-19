@@ -129,146 +129,65 @@ app.post('/additem', async (req, res) => {
 })
 app.post('/', (req, res) => {
     const path = req.body.path
-    if (true) {
-        Location.findOne({ path: path }).populate('locationlist itemlist').exec(async (err, loc) => {
-            if (loc.locationlist.length > 0) {
-                let L_list = []
-                for (let i = 0; i < loc.locationlist.length; i++) {
-                    let temp = ''
-                    if (loc.locationlist[i].locationlist.length > 0) {
-                        temp = 'Location'
-                    }
-                    else {
-                        temp = 'ShelfTable'
-                    }
-                    let a = {
-                        title: loc.locationlist[i].name,
-                        path: loc.locationlist[i].path,
-                        description: loc.locationlist[i].description,
-                        template: temp
-                    }
-                    L_list.push(a)
+    Location.findOne({ path: path }).populate('locationlist itemlist').exec(async (err, loc) => {
+        if (loc.locationlist.length > 0) {
+            let L_list = []
+            for (let i = 0; i < loc.locationlist.length; i++) {
+                let temp = ''
+                if (loc.locationlist[i].locationlist.length > 0) {
+                    temp = 'Location'
                 }
-                res.send({
-                    title: loc.name,
-                    locationlist: L_list,
-                    path: loc.path,
-                    itemlist: [],
-                    template: "Location"
-                })
-            }
-            else if (loc.itemlist.length > 0) {
-                let I_list = []
-                for (let i = 0; i < loc.itemlist.length; i++) {
-                    await User.findOne({ _id: loc.itemlist[i].owner }, (err, u) => {
-                        let item = {
-                            id: loc.itemlist[i]._id,
-                            name: loc.itemlist[i].name,
-                            time: loc.itemlist[i].time,
-                            owner: u.name,
-                            description: loc.itemlist[i].description
-                        }
-                        I_list.push(item)
-                    })
+                else {
+                    temp = 'ShelfTable'
                 }
-                res.send({
-                    title: loc.name,
-                    locationlist: [],
-                    path: loc.path,
-                    itemlist: I_list,
-                    template: "ShelfTable"
-                })
-            }
-            else {
-                res.send({
-                    title: loc.name,
-                    path: loc.path,
-                    locationlist: [],
-                    itemlist: [],
-                    template: ""
-                })
-            }
-            // let L_list = []
-            // for (let i = 0; i < loc.locationlist.length; i++) {
-            //     let temp = ''
-            //     if (loc.locationlist[i].locationlist.length > 0) {
-            //         temp = 'Location'
-            //     }
-            //     else {
-            //         temp = 'ShelfTable'
-            //     }
-            //     let a = {
-            //         title: loc.locationlist[i].name,
-            //         description: loc.locationlist[i].description,
-            //         template: temp
-            //     }
-            //     L_list.push(a)
-            // }
-            // res.send({
-            //     title: loc.name,
-            //     locationlist: L_list,
-            //     itemlist: [],
-            //     template: "Location"
-            // })
-        })
-    }
-    else {
-        Location.findOne({ name: path[path.length - 1] }).populate('locationlist itemlist owner').exec(async (err, loc) => {
-            if (loc.locationlist.length > 0) {
-                let L_list = []
-                for (let i = 0; i < loc.locationlist.length; i++) {
-                    let temp = ''
-                    if (loc.locationlist[i].locationlist.length > 0) {
-                        temp = 'Location'
-                    }
-                    else {
-                        temp = 'ShelfTable'
-                    }
-                    let a = {
-                        title: loc.locationlist[i].name,
-                        description: loc.locationlist[i].description,
-                        template: temp
-                    }
-                    L_list.push(a)
+                let a = {
+                    title: loc.locationlist[i].name,
+                    path: loc.locationlist[i].path,
+                    description: loc.locationlist[i].description,
+                    template: temp
                 }
-                res.send({
-                    title: loc.name,
-                    locationlist: L_list,
-                    itemlist: [],
-                    template: "Location"
+                L_list.push(a)
+            }
+            res.send({
+                title: loc.name,
+                locationlist: L_list,
+                path: loc.path,
+                itemlist: [],
+                template: "Location"
+            })
+        }
+        else if (loc.itemlist.length > 0) {
+            let I_list = []
+            for (let i = 0; i < loc.itemlist.length; i++) {
+                await User.findOne({ _id: loc.itemlist[i].owner }, (err, u) => {
+                    let item = {
+                        id: loc.itemlist[i]._id,
+                        name: loc.itemlist[i].name,
+                        time: loc.itemlist[i].time,
+                        owner: u.name,
+                        description: loc.itemlist[i].description
+                    }
+                    I_list.push(item)
                 })
             }
-            else if (loc.itemlist.length > 0) {
-                let I_list = []
-                for (let i = 0; i < loc.itemlist.length; i++) {
-                    await User.findOne({ _id: loc.itemlist[i].owner }, (err, u) => {
-                        let item = {
-                            id: loc.itemlist[i]._id,
-                            name: loc.itemlist[i].name,
-                            time: loc.itemlist[i].time,
-                            owner: u.name,
-                            description: loc.itemlist[i].description
-                        }
-                        I_list.push(item)
-                    })
-                }
-                res.send({
-                    title: loc.name,
-                    locationlist: [],
-                    itemlist: I_list,
-                    template: "ShelfTable"
-                })
-            }
-            else {
-                res.send({
-                    title: loc.name,
-                    locationlist: [],
-                    itemlist: [],
-                    template: ""
-                })
-            }
-        })
-    }
+            res.send({
+                title: loc.name,
+                locationlist: [],
+                path: loc.path,
+                itemlist: I_list,
+                template: "ShelfTable"
+            })
+        }
+        else {
+            res.send({
+                title: loc.name,
+                path: loc.path,
+                locationlist: [],
+                itemlist: [],
+                template: ""
+            })
+        }
+    })
 });
 app.put('/', (req, res) => {
     Item.remove({}, () => console.log('All Items have been removed'))
