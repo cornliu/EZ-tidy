@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function MainArea(){
-  const [pathlist, setPathlist] = useState(functionList)
+  const [pathlist, setPathlist] = useState(functionList.locationlist)
   const classes = useStyles();
 
   return (

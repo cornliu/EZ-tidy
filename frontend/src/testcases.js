@@ -1,14 +1,19 @@
 import { Overview, Freezer, Equipment, MakerSpace, Member, ShelfTable1 } from './components'
 import { Speed, Kitchen, PeopleAltOutlined, Speaker, Build } from '@material-ui/icons'
 
-export const functionList = [
-  {key: 1, title: "Overview", icon: <Speed />, path: "/overview", template: "Overview"}, 
-  {key: 2, title: "冰箱", icon: <Kitchen />, path: "/freezer", template: "ShelfTable"}, 
-  {key: 3, title: "器材", icon: <Speaker />, path: "/equipment", template: "ShelfTable"}, 
-  {key: 4, title: "MakerSpace", icon: <Build />, path: "/mks", template: "ShelfTable"},
-  {key: 5, title: "Member", icon: <PeopleAltOutlined />, path: "/member", template: "ShelfTable"},
-  {key: 6, title: "Home", icon: <PeopleAltOutlined />, path: "/home", template: "Container"}
-];
+export const functionList = {
+  title: "EZ Tidy",
+  locationlist: [
+    { title: "Overview", icon: <Speed />, path: "/overview", template: "Overview"}, 
+    { title: "冰箱", icon: <Kitchen />, path: "/freezer", template: "ShelfTable"}, 
+    { title: "器材", icon: <Speaker />, path: "/equipment", template: "ShelfTable"}, 
+    { title: "MakerSpace", icon: <Build />, path: "/mks", template: "ShelfTable"},
+    { title: "Member", icon: <PeopleAltOutlined />, path: "/member", template: "ShelfTable"},
+    { title: "Home", icon: <PeopleAltOutlined />, path: "/home", template: "Location"}
+  ],
+  path: "/",
+  template: "Overview"
+};
 
 export const tmp_list = [
   {id: 1, item_name: "牛奶", store_time: "2021-01-01", owner: "吳沛林", location: "冰箱"},
@@ -18,3 +23,15 @@ export const tmp_list = [
   {id: 5, item_name: "茶裏王", store_time: "2021-01-15", owner: "劉玉米", location: "冰箱"},
   {id: 6, item_name: "醬油", store_time: "2021-01-17", owner: "羅才淵", location: "冰箱"}
   ]
+
+export const tmp_location = {
+  title: "MakerSpace",
+  locationlist: [
+    { title: "Place 1", path: "/place1", template: "ShelfTable"},
+    { title: "Place 2", path: "/place2", template: "ShelfTable"},
+    { title: "Place 3", path: "/place3", template: "ShelfTable"}
+  ],
+  path: "/mks",
+  template: "Location",
+
+}

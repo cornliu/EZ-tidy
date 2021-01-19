@@ -157,7 +157,7 @@ export default function MiniDrawer() {
         </div>
         <Divider />
         <List>
-          {functionList.map((option, index) => (
+          {functionList.locationlist.map((option, index) => (
             <ListItem button component={Link} key={option.path} to={option.path} >
               <ListItemIcon>{option.icon}</ListItemIcon>
               <ListItemText primary={option.text} />
