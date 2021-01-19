@@ -2,9 +2,9 @@ import { Overview, Freezer, Equipment, MakerSpace, Member, ShelfTable1 } from '.
 import { Speed, Kitchen, PeopleAltOutlined, Speaker, Build } from '@material-ui/icons'
 
 export const pathList = [
-  { title: "首頁", icon: <PeopleAltOutlined />, path: "/home", template: "Location"},
-  { title: "冰箱", icon: <Kitchen />, path: "/freezer", template: "ShelfTable"}, 
-  { title: "MakerSpace", icon: <Build />, path: "/mks", template: "Location"}
+  { title: "首頁", icon: <PeopleAltOutlined />, path: "/", template: "Location"},
+  { title: "BL", icon: <Kitchen />, path: "/bl", template: "Location"}, 
+  { title: "MakerSpace", icon: <Build />, path: "/bl/mks", template: "ShelfTable"}
 ]
 
 export const locationData_Home = {

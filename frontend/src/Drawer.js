@@ -2,20 +2,20 @@
 // 包括AppBar及SideMenu
 // 主要內容在MainArea中
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { 
   Drawer, AppBar, Toolbar, List, CssBaseline, Typography, 
   Divider, IconButton, ListItem, ListItemIcon, ListItemText 
 } from '@material-ui/core';
-import { Menu, ChevronLeft, ChevronRight, Add } from '@material-ui/icons'
+import { Menu, ChevronLeft, ChevronRight, Add, Home, Room, FormatListNumbered, Error } from '@material-ui/icons'
 import { Link } from "react-router-dom"
 // import { sendData } from './useSend'
 import { message } from 'antd'
 import MainArea from './MainArea'
-import { pathList } from './testcases'
-
+import { defaultData, getLocationData } from './Connection';
+// import { pathList } from './testcases'
 
 const drawerWidth = 240;
 
@@ -84,7 +84,8 @@ const useStyles = makeStyles((theme) => ({
 export default function MiniDrawer() {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [pathList, setPathList] = useState([]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -114,6 +115,22 @@ export default function MiniDrawer() {
       }
     }
   };
+  const updatePathList = async ()=>{
+    const tmp_Data = await getLocationData("/");
+    if (tmp_Data.locationlist){
+      console.log("Get pathList!");
+      console.log(tmp_Data.locationlist);
+      setPathList(tmp_Data.locationlist);
+    }
+    else{
+      console.log("Error! can't find location Data!");
+      console.log(tmp_Data);
+    }
+  }
+
+  useEffect(()=>{
+    updatePathList();
+  }, [])
 
   return (
     <div className={classes.root}>
@@ -155,26 +172,40 @@ export default function MiniDrawer() {
         }}
       >
         <div className={classes.toolbar}>
+          <ListItem button component={Link} key="/" to="/">
+            <ListItemIcon><Home /></ListItemIcon>
+            <ListItemText>Home</ListItemText>
+          </ListItem>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
           </IconButton>
         </div>
         <Divider />
         <List>
-          {pathList.map((option) => (
+          {pathList.map((option) => option.template === "Location" ? (
             <ListItem button component={Link} key={option.path} to={option.path} >
-              <ListItemIcon>{option.icon}</ListItemIcon>
-              <ListItemText primary={option.text} />
+              <ListItemIcon><Room /></ListItemIcon>
+              <ListItemText primary={option.title} />
+            </ListItem>
+          ): option.template === "ShelfTable" ? (
+            <ListItem button component={Link} key={option.path} to={option.path} >
+              <ListItemIcon><FormatListNumbered /></ListItemIcon>
+              <ListItemText primary={option.title} />
+            </ListItem>
+          ): (
+            <ListItem button component={Link} key={option.path} to={option.path} >
+              <ListItemIcon><Error /></ListItemIcon>
+              <ListItemText primary={option.title} />
             </ListItem>
           ))}
         </List>
-        <Divider />
+        {/* <Divider />
         <List>
-          <ListItem button key="add">
-            <ListItemIcon component={Link} to="/add_new_container"><Add /></ListItemIcon>
+          <ListItem button key="addlocation" component={Link} to="/addlocation">
+            <ListItemIcon><Add /></ListItemIcon>
             <ListItemText primary="Add New" />
           </ListItem>
-        </List>
+        </List> */}
       </Drawer>
       <MainArea className={classes.content} />
     </div>

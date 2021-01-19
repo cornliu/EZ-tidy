@@ -1,12 +1,11 @@
-import { locationData, locationData_MKS, locationData_Freezer, pathList } from './testcases'
-import { Redirect, Route } from "react-router-dom"
-import { message } from 'antd'
+import { pathList } from './testcases'
+import { Route } from "react-router-dom"
 import { ShelfTable1 } from './components/ShelfTable1'
-import { useState } from 'react'
-import { Overview } from './components'
-import { Container } from '@material-ui/core'
+import { AddLocation } from './components/AddLocation'
+import { useEffect, useState } from 'react'
 import { Location } from './components/Location'
 import { makeStyles } from '@material-ui/core/styles';
+import { getLocationData, defaultData } from './Connection'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,37 +25,46 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 export default function MainArea(){
   const [pathlist, setPathlist] = useState(pathList)
   const classes = useStyles();
-  
+  const [path, setPath] = useState("")
+  const [locationData, setLocationData] = useState(defaultData);
+  // const getLocationData = async (path) => {
+  //   const {data} = await instance.post("/", {path: path});
+  //   if (data.title){
+  //     return data;
+  //   }
+  //   else{
+  //     console.log("Data request Error!");
+  //     console.log(data);
+  //     return defaultData;
+  //   }
+  // }
+
+  // useEffect(()=>{
+  //   setLocationData(getLocationData("/"));
+  // }, [])
 
   return (
     <div className={classes.content}>
       <div className={classes.toolbar} />
-      {/* <h1>This is Title</h1> */}
-      <Route exact path="/">
-        <Redirect to="/home" />
-      </Route>
-      {/* <Route exact path="/" /> */}
       {pathlist.map((option, index)=>(
-        option.template === "Overview" ? (
+        option.template === "ShelfTable"? (
           <Route exact key={index} path={option.path} title={option.title}>
-            <Overview path={option.path}/>
-          </Route>
-        ): option.template === "ShelfTable"? (
-          <Route exact key={index} path={option.path} title={option.title}>
-            <ShelfTable1 path={option.path}/>
+            <ShelfTable1 path={option.path} getData={getLocationData}/>
           </Route>
         ): option.template === "Location"? (
           <Route exact key={index} path={option.path} title={option.title}>
-            <Location path={option.path}/>
+            <Location path={option.path} getData={getLocationData}/>
           </Route>
         ): (
           <p>Unrecognize template.</p>
         )
       ))}
+      {/* <Route exact key="addlocation" path="/addlocation">
+        <AddLocation />
+      </Route> */}
     </div>
   )
 }
