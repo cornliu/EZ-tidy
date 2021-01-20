@@ -14,6 +14,7 @@ router.post('/', async (req, res) => {
             let a = {
                 title: loc.locationlist[i].name,
                 path: loc.locationlist[i].path,
+                id:loc.locationlist[i]._id,
                 description: loc.locationlist[i].description,
                 template: loc.locationlist[i].template
             }
@@ -23,6 +24,7 @@ router.post('/', async (req, res) => {
             title: loc.name,
             time: loc.time,
             description: loc.description,
+            id:loc._id,
             locationlist: L_list,
             path: loc.path,
             itemlist: [],
@@ -47,6 +49,7 @@ router.post('/', async (req, res) => {
             title: loc.name,
             time: loc.time,
             description: loc.description,
+            id:loc._id,
             locationlist: [],
             path: loc.path,
             itemlist: I_list,
@@ -59,6 +62,7 @@ router.post('/', async (req, res) => {
             title: loc.name,
             time: loc.time,
             description: loc.description,
+            id:loc._id,
             path: loc.path,
             locationlist: [],
             itemlist: [],

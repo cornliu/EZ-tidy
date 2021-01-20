@@ -35,8 +35,6 @@ router.post('/item', async (req, res) => {
         await loc.update({ itemlist: [...loc.itemlist, item._id], template: "ShelfTable" })
         return res.status(200).send(`item ${req.body.name} is saved`)
     }
-
-
 })
 router.post('/location', async (req, res) => {
     const user = await User.findOne({ name: req.body.username })
@@ -56,9 +54,6 @@ router.post('/location', async (req, res) => {
             return res.status(405).send(`Itemlist is not empty, you can't add location in this location.`)
         }
         else {
-            console.log('==============');
-            console.log(req.body);
-            console.log('==============');
             const loc = new Location({
                 name: req.body.title,
                 time: req.body.time,
