@@ -57,6 +57,8 @@ router.post('/location', async (req, res) => {
         }
         else {
             console.log('==============');
+            console.log(req.body);
+            console.log('==============');
             const loc = new Location({
                 name: req.body.title,
                 time: req.body.time,
