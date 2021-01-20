@@ -22,7 +22,7 @@ router.post('/item', async (req, res) => {
                     res.status(405).send(`Locationlist is not empty, you can't add item in this location.`)
                 }
                 else {
-                    const item = new Item({
+                    const item = await new Item({
                         name: req.body.name,
                         time: req.body.time,
                         description: req.body.description,

@@ -5,7 +5,9 @@ import User from '../models/user.js'
 const router = express.Router()
 router.post('/', async (req, res) => {
     const path = req.body.path
+    console.log(path);
     await Location.findOne({ path: path }).populate('locationlist itemlist').exec(async (err, loc) => {
+        // console.log(loc);
         if (!loc) res.status(404).send(`Path ${path} does not exist!!`)
         else if (loc.locationlist.length > 0) {
             let L_list = []
@@ -23,7 +25,7 @@ router.post('/', async (req, res) => {
                 L_list.push(a)
             }
             res.send({
-                title: loc.name,
+                title: loc.name, 
                 time: loc.time,
                 description: loc.description,
                 locationlist: L_list,
@@ -68,5 +70,11 @@ router.post('/', async (req, res) => {
             })
         }
     })
+    await Location.findOne({path:req.body.path}).exec((err,qq)=>{
+        console.log(qq);
+    })
+    // await User.findOne({_id:'6007f2be83d1e744d526ab4f'},async (err,qq)=>{
+    //     console.log(qq);
+    // })
 })
 export default router
