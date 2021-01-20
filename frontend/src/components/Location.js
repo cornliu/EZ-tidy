@@ -1,39 +1,48 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom';
-import { Card, CardActionArea, CardActions, CardContent, Typography } from '@material-ui/core';
+import {
+  Avatar, Card, CardActionArea, CardActions, CardContent,
+  CardHeader, IconButton, Typography, Box
+} from '@material-ui/core';
 import { AddLocationDialog } from './AddLocation';
 import { defaultData } from '../Connection';
+import { Add, Delete, Folder } from '@material-ui/icons';
 
 
 const useStyles = makeStyles((theme) => ({
-  card: {
-    display: 'flex',
-    padding: theme.spacing(2),
+  root: {
+    padding: theme.spacing(8),
+    display: "flex",
+    flexDirection: "row",
     flexWrap: 'wrap',
     justifyContent: "center",
-    minHeight: 200,
-    minWidth: 300,
     '& > *': {
       margin: theme.spacing(1),
       width: theme.spacing(16),
       height: theme.spacing(16),
     },
+  },
+  card: {
+    minWidth: 100,
+  },
+  cardrow: {
+    display: "flex",
   }
 }));
 
-export function Location(props){
+export function Location(props) {
   const classes = useStyles();
   let locationData = props.pageData;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogRef, setDialogRef] = useState(null)
 
-  const getData = async ()=>{
+  const getData = async () => {
     props.setData(await props.getData(props.path));
     // console.log(locationData);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getData(props.path);
   }, [props.path, dialogOpen])
 
@@ -43,29 +52,57 @@ export function Location(props){
         <Typography variant="h3">{locationData.title}</Typography>
         <Typography >{locationData.description}</Typography>
       </div>
-      <div className={classes.card}>
-        {locationData.locationlist.map((location)=>(
-          <Card key={location.path} component={Link} elevation={3} to={location.path} replace>
-            <CardActionArea>
-              <CardContent width={1} height={1}>
-                <Typography >{location.title}</Typography>
+      <Box className={classes.root}>
+        {locationData.locationlist.map((location) => (
+          <Card key={location.path} elevation={3} className={classes.card} >
+            <CardHeader
+              avatar={
+                <Avatar>
+                  <Folder />
+                </Avatar>
+              }
+              action={
+                <IconButton>
+                  <Delete />
+                </IconButton>
+              } ></CardHeader>
+            <CardActionArea component={Link} to={location.path} replace >
+              <CardContent className={classes.cardrow}>
+                <Typography component="h4">{location.title}</Typography>
+              </CardContent>
+              <CardContent>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  component="p" >
+                  {location.description ? (
+                    location.description
+                  ) : (
+                      ""
+                    )}
+                </Typography>
               </CardContent>
             </CardActionArea>
           </Card>
         ))}
-        <Card key="newlocation" elevation={3} onClick={()=>{setDialogOpen(true)}}>
+        <Card key="newlocation" elevation={3} onClick={() => { setDialogOpen(true) }} className={classes.card} >
           <CardActionArea>
-            <CardContent>
-              <Typography>Add New Location Here.</Typography>
-            </CardContent>
+            <CardHeader
+              avatar={
+                <Avatar>
+                  <Add />
+                </Avatar>
+              }
+              title="Add New Location"
+            ></CardHeader>
           </CardActionArea>
         </Card>
-        <AddLocationDialog 
-          ref={dialogRef} 
-          onClose={()=>{setDialogOpen(false)}} 
-          open={dialogOpen} 
+        <AddLocationDialog
+          ref={dialogRef}
+          onClose={() => { setDialogOpen(false) }}
+          open={dialogOpen}
           currentPath={locationData.path} />
-      </div>
+      </Box>
     </div>
   )
 }

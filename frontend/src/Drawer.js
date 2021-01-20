@@ -17,7 +17,7 @@ import { message, Button, Input } from 'antd'
 import MainArea from './MainArea'
 import { pathList } from './testcases'
 import PropTypes from 'prop-types';
-import { UserAvatar } from './login';
+import { UserAvatar } from './components/Login';
 import { defaultData, getLocationData } from './Connection';
 import { Location } from './components';
 // import { pathList } from './testcases'

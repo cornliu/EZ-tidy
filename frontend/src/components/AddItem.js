@@ -22,13 +22,19 @@ export function AddItemDialog(props){
   const { onClose, open, currentPath } = props;
   const [name, setName] = useState("");
   const [owner, setOwner] = useState("ric");
-  const [discription, setDiscription] = useState("");
+  const [description, setDescription] = useState("");
   const classes = useStyles();
 
   const getTimeString = ()=>{
     const a = new Date();
-    console.log(a);
-    return a.toISOString()
+    const year = ("0000" + String(a.getFullYear())).slice(-4)
+    const month = ("0000" + String(a.getMonth()+1)).slice(-2)
+    const day = ("0000" + String(a.getDate())).slice(-2)
+    const hour = ("0000" + String(a.getHours())).slice(-2)
+    const minute = ("0000" + String(a.getMinutes())).slice(-2)
+    const str = year + "/" +month+"/"+day+" "+hour+":"+minute;
+    console.log(str);
+    return str
   }
 
   const handleConfirm = async ()=>{
@@ -37,7 +43,7 @@ export function AddItemDialog(props){
       path: currentPath,
       owner: owner,
       time: getTimeString(),
-      discription: discription
+      description: description
     };
     console.log(item);
     console.log(await addItemToServer(item));
@@ -54,10 +60,10 @@ export function AddItemDialog(props){
         <ListItem>
           <TextField 
             fullWidth 
-            id="discription" 
-            label="Discription" 
+            id="description" 
+            label="Description" 
             multiline 
-            onChange={(event)=>{setDiscription(event.target.value)}} />
+            onChange={(event)=>{setDescription(event.target.value)}} />
         </ListItem>
       </List>
       <DialogActions>

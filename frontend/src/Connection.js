@@ -40,13 +40,19 @@ export const addLocationToServer = async (location) => {
 }
 
 export const loginToServer = async (user) => {
-  const { data } = await instance.post("/login", user);
+  const { data } = await instance.post("/check", user);
   console.log(data);
   return data
 }
 
 export const addUserToServer = async (user) => {
   const { data } = await instance.post("/add/user", user);
+  console.log(data);
+  return data
+}
+
+export const deleteItems = async (req) => {
+  const { data } = await instance.post("/remove", req);
   console.log(data);
   return data
 }
