@@ -6,7 +6,7 @@ const router = express.Router()
 router.post('/', async (req, res) => {
     await User.findOne({ name: req.body.name }, async (err, user) => {
         if (!user) res.status(404).send('User not found!!')
-        else if (res.body.password === user.password){
+        else if (req.body.password === user.password){
             res.status(200).send(true)
         }
         else res.status(406).send(false)
