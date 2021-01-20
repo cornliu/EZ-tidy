@@ -28,13 +28,13 @@ export function Empty(props){
   const [addLocationDialogOpen, setAddLocationDialogOpen] = useState(false);
   const [dialogRef, setDialogRef] = useState(null)
 
-  const getData = async ()=>{
-    console.log("Query from Empty");
-    props.setData(await props.getData(props.path));
-  }
+  // const getData = async ()=>{
+  //   console.log("Query from Empty");
+  //   props.setData(await props.getData(props.path));
+  // }
 
   useEffect(()=>{
-    getData(props.path);
+    props.getData();
   }, [props.path, addItemDialogOpen, addLocationDialogOpen])
 
   return (

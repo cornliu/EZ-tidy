@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
-  List, ListItem, ListItemText, Avatar, DialogTitle, 
-  Dialog, ListItemAvatar, TextField, DialogActions, Button
+  List, ListItem, ListItemText, Avatar, DialogTitle,
+  Dialog, ListItemAvatar, TextField, DialogActions, Button,
+  Box, Card, CardHeader, CardActionArea, CardMedia, CardContent, Typography, makeStyles, CardActions
 } from '@material-ui/core';
-import { AccountCircle } from '@material-ui/icons'
-import { loginToServer } from '../Connection';
+import { AccountCircle, Lock } from '@material-ui/icons'
+import { loginToServer, addUserToServer } from '../Connection';
+import { AuthContext } from '../contexts'
+import { useSnackbar } from 'notistack';
 
 export function LoginDialog(props) {
-  const [login, setLogin] = useState(props.auth.haslogin);
-  const [name, setName] = useState(props.auth.name);
-  const [password, setPassword] = useState(props.auth.password);
+  const auth = useContext(AuthContext)
+  const [login, setLogin] = useState(auth.haslogin);
+  const [name, setName] = useState(auth.name);
+  const [password, setPassword] = useState(auth.password);
 
   const tryLogin = async () => {
     const user = {
@@ -19,43 +23,51 @@ export function LoginDialog(props) {
     if (name && password) {
       const msg = (await loginToServer(user));
       console.log("try login:", msg)
-      if (msg===true){
+      if (msg === true) {
         props.setAuth({
           haslogin: true,
           name: name,
-          password: password
+          password: password,
+          identity: name === "Admin" ? "Admin" : "User"
         })
         props.onClose();
       }
     }
   }
 
-  useEffect(()=>{
-    setLogin(props.auth.haslogin);
-    setName(props.auth.name);
-    setPassword(props.auth.password);
-  }, [props.auth])
+  useEffect(() => {
+    setLogin(auth.haslogin);
+    setName(auth.name);
+    setPassword(auth.password);
+  }, [auth])
 
   const trySignOut = () => {
     console.log("try sign out")
     props.setAuth({
       haslogin: false,
       name: name,
-      password: ""
+      password: "",
+      identity: "User"
     })
   }
 
   return (
     <Dialog onClose={props.onClose} aria-labelledby="simple-dialog-title" open={props.open}>
-      {login ? (
+      {!login && (
         <DialogTitle id="dialog-title">
-          {name}
+          Login
         </DialogTitle>
-      ) : (
-          <DialogTitle id="dialog-title">
-            Login
-          </DialogTitle>
-        )}
+      )}
+      {login && (
+        <List>
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar />
+            </ListItemAvatar>
+            <ListItemText primary={name} />
+          </ListItem>
+        </List>
+      )}
       {!login && (
         <List>
           <ListItem>
@@ -99,12 +111,6 @@ export function LoginDialog(props) {
   );
 }
 
-// LoginDialog.propTypes = {
-//   onClose: PropTypes.func.isRequired,
-//   open: PropTypes.bool.isRequired,
-//   selectedValue: PropTypes.string.isRequired,
-// };
-
 export function UserAvatar(props) {
   const [open, setOpen] = useState(false);
   const { auth, setAuth } = props;
@@ -120,5 +126,131 @@ export function UserAvatar(props) {
         open={open}
         onClose={() => { setOpen(false) }} />
     </div>
+  )
+}
+
+const useStyle = makeStyles((theme) => ({
+  root: {
+    position: 'absolute',
+    minHeight: "100%",
+    height: "100%",
+    width: "100%",
+    display: 'flex',
+    justifyContent: "center",
+    alignItems: 'center',
+    flexShrink: 0,
+    flexGrow: 1,
+  },
+  card: {
+    maxWidth: 345,
+    display: 'flex',
+    flexDirection: 'column',
+    alignSelf: 'center',
+    padding: theme.spacing(8),
+  },
+  cardcontent: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  textfield: {
+    margin: theme.spacing(1),
+  },
+  cardactions: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: "flex_end",
+  },
+}))
+
+export function Login(props) {
+  const { setAuth } = props;
+  const classes = useStyle();
+  const auth = useContext(AuthContext);
+  const [login, setLogin] = useState(auth.haslogin);
+  const [name, setName] = useState(auth.name);
+  const [password, setPassword] = useState(auth.password);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const tryLogin = async () => {
+    const user = {
+      name: name,
+      password: password,
+    }
+    if (name && password) {
+      const { status, data } = await loginToServer(user);
+      if (status === "success") {
+        props.setAuth({
+          haslogin: true,
+          name: name,
+          password: password,
+          identity: name === "Admin" ? "Admin" : "User"
+        })
+        enqueueSnackbar(data, { variant: status });
+      }
+    }
+  }
+
+  const createUser = async () => {
+    const user = {
+      name: name,
+      password: password,
+      identity: "User"
+    }
+    if (name && password) {
+      const { status, data } = await addUserToServer(user);
+      enqueueSnackbar(data, { variant: status });
+      if (status === "success") {
+        setName("");
+        setPassword("");
+      }
+    }
+  }
+
+  useEffect(() => {
+    setName(auth.name);
+    setPassword(auth.password);
+  }, [auth])
+
+  const trySignOut = () => {
+    console.log("try sign out")
+    props.setAuth({
+      haslogin: false,
+      name: name,
+      password: "",
+      identity: "User"
+    })
+  }
+
+  return (
+    <Box className={classes.root}>
+      <Card className={classes.card}>
+        <CardMedia>
+          <Lock />
+        </CardMedia>
+        <CardContent className={classes.cardcontent}>
+          <Typography gutterBottom>
+            登入
+          </Typography>
+          <TextField label="username" variant='outlined'
+            value={name}
+            className={classes.textfield}
+            onChange={(e) => { setName(e.target.value) }} />
+          <TextField label="password" variant='outlined'
+            value={password}
+            className={classes.textfield} type='password'
+            onChange={(e) => { setPassword(e.target.value) }} />
+        </CardContent>
+        <CardActions className={classes.cardcontent}>
+          <Button variant="contained" color="primary"
+            onClick={() => tryLogin()} >
+            Log in
+          </Button>
+          <Button variant="text" color="primary"
+            onClick={() => createUser()} >
+            Register
+          </Button>
+        </CardActions>
+      </Card>
+    </Box>
   )
 }

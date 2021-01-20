@@ -1,5 +1,5 @@
 import { locationData, locationData_MKS, locationData_Freezer, pathList } from './testcases'
-import { Redirect, Route, Switch, useLocation, useParams } from "react-router-dom"
+import { Redirect, Route, Switch, useLocation, useParams, useHistory } from "react-router-dom"
 import { message } from 'antd'
 import { ShelfTable1 } from './components/ShelfTable1'
 import { useEffect, useState } from 'react'
@@ -10,6 +10,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { defaultData, getLocationData } from './Connection'
 import { Empty } from './components/Empty'
 import { ShelfGrid } from './components/ShelfGrid'
+import { Loading } from './components/Loading'
+import { useSnackbar } from 'notistack'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,14 +37,23 @@ export default function MainArea() {
   let location = useLocation();
   const [pageData, setPageData] = useState(defaultData);
   const [path, setPath] = useState(location.pathname);
+  const { enqueueSnackbar } = useSnackbar();
+  const history = useHistory();
 
   const updatePageData = async (path) => {
-    console.log("Getting Data for path:", path)
-    setPageData(await getLocationData(path));
-    console.log(pageData.locationlist)
+    // enqueueSnackbar("Loading ...");
+    const {status, data} = await getLocationData(path);
+    if (status === "success") {
+      setPageData(data);
+    }
+    else {
+      enqueueSnackbar(data, { variant: "error" });
+      enqueueSnackbar("Redirected to home.", { variant: "info" })
+      history.push("/")
+    }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     setPath(location.pathname);
   }, [location])
 
@@ -54,22 +65,28 @@ export default function MainArea() {
     <div className={classes.content}>
       <div className={classes.toolbar} />
       {pageData.template === "Location" ? (
-        <Location 
-          path={path} 
-          pageData={pageData} 
-          getData={getLocationData}
+        <Location
+          path={path}
+          pageData={pageData}
+          getData={() => {updatePageData(path)}}
           setData={setPageData} />
       ) : pageData.template === "ShelfTable" ? (
-        <ShelfGrid 
-          path={path} 
-          pageData={pageData} 
-          getData={getLocationData}
+        <ShelfGrid
+          path={path}
+          pageData={pageData}
+          getData={() => {updatePageData(path)}}
+          setData={setPageData} />
+      ) : pageData.template === "Empty" ? (
+        <Empty
+          path={path}
+          pageData={pageData}
+          getData={() => {updatePageData(path)}}
           setData={setPageData} />
       ) : (
-        <Empty 
-          path={path} 
-          pageData={pageData} 
-          getData={getLocationData}
+        <Loading
+          path={path}
+          pageData={pageData}
+          getData={() => {updatePageData(path)}}
           setData={setPageData} />
       )}
     </div>

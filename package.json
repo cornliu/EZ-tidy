@@ -2,8 +2,7 @@
   "name": "2020web-finalproject",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
     "preinstall": "cd ./frontend && yarn && cd ../backend && yarn",
     "start": "cd ./frontend && yarn start",

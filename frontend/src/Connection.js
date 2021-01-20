@@ -14,45 +14,103 @@ export const defaultData = {
 }
 
 export const getLocationData = async (path) => {
-  const { data } = await instance.post("/query", { path: path });
-  if (data.title) {
-    console.log("success!");
-    console.log(data)
-    return data;
-  }
-  else {
-    console.log("Data request Error!");
-    console.log(data);
-    return defaultData;
+  let data = null;
+  let status = "success";
+  try {
+    const res = await instance.post("/query", { path: path });
+    data = res.data;
+  } catch (err) {
+      status = "error";
+      data = err.response;
+  } finally {
+    return {
+      status: status,
+      data: data
+    }
   }
 }
 
 export const addItemToServer = async (item) => {
-  const { data } = await instance.post("/add/item", item);
-  console.log(data);
-  return data
+  let data = null;
+  let status = "success";
+  try {
+    const res = await instance.post("/add/item", item);
+    data = res.data;
+  } catch (err) {
+      status = "error";
+      data = err.response;
+  } finally {
+    return {
+      status: status,
+      data: data
+    }
+  }
 }
 
 export const addLocationToServer = async (location) => {
-  const { data } = await instance.post("/add/location", location);
-  console.log(data);
-  return data
+  let data = null;
+  let status = "success";
+  try {
+    const res = await instance.post("/add/location", location);
+    data = res.data;
+  } catch (err) {
+      status = "error";
+      data = err.response;
+  } finally {
+    return {
+      status: status,
+      data: data
+    }
+  }
 }
 
 export const loginToServer = async (user) => {
-  const { data } = await instance.post("/check", user);
-  console.log(data);
-  return data
+  let data = null;
+  let status = "success";
+  try {
+    const res = await instance.post("/check", user);
+    data = res.data;
+  } catch (err) {
+      status = "error";
+      data = err.response;
+  } finally {
+    return {
+      status: status,
+      data: data
+    }
+  }
 }
 
 export const addUserToServer = async (user) => {
-  const { data } = await instance.post("/add/user", user);
-  console.log(data);
-  return data
+  let data = null;
+  let status = "success";
+  try {
+    const res = await instance.post("/add/user", user);
+    data = res.data;
+  } catch (err) {
+      status = "error";
+      data = err.response;
+  } finally {
+    return {
+      status: status,
+      data: data
+    }
+  }
 }
 
 export const deleteItems = async (req) => {
-  const { data } = await instance.post("/remove", req);
-  console.log(data);
-  return data
+  let data = null;
+  let status = "success";
+  try {
+    const res = await instance.post("/remove/item", req);
+    data = res.data;
+  } catch (err) {
+      status = "error";
+      data = err.response;
+  } finally {
+    return {
+      status: status,
+      data: data
+    }
+  }
 }

@@ -5,6 +5,8 @@ import {
   List, ListItem, Button, DialogActions
 } from '@material-ui/core';
 import { addItemToServer } from '../Connection'
+import { AuthContext } from '../contexts';
+import { useSnackbar } from 'notistack'
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -24,6 +26,8 @@ export function AddItemDialog(props){
   const [owner, setOwner] = useState("ric");
   const [description, setDescription] = useState("");
   const classes = useStyles();
+  const auth = React.useContext(AuthContext)
+  const { enqueueSnackbar } = useSnackbar()
 
   const getTimeString = ()=>{
     const a = new Date();
@@ -43,10 +47,11 @@ export function AddItemDialog(props){
       path: currentPath,
       owner: owner,
       time: getTimeString(),
+      username: auth.name,
       description: description
     };
-    console.log(item);
-    console.log(await addItemToServer(item));
+    const {status, data} = await addItemToServer(item);
+    enqueueSnackbar(data, {variant: status});
     onClose();
   }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import {
   Avatar, Card, CardActionArea, CardActions, CardContent,
   CardHeader, IconButton, Typography, Box
@@ -36,14 +36,15 @@ export function Location(props) {
   let locationData = props.pageData;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogRef, setDialogRef] = useState(null)
+  const history = useHistory();
 
   const getData = async () => {
     props.setData(await props.getData(props.path));
     // console.log(locationData);
   }
 
-  useEffect(() => {
-    getData(props.path);
+  useEffect(()=>{
+    props.getData();
   }, [props.path, dialogOpen])
 
   return (
@@ -54,7 +55,8 @@ export function Location(props) {
       </div>
       <Box className={classes.root}>
         {locationData.locationlist.map((location) => (
-          <Card key={location.path} elevation={3} className={classes.card} >
+          <Card key={location.path} elevation={3} className={classes.card}
+            onClick={() => history.push(location.path)} >
             <CardHeader
               avatar={
                 <Avatar>
@@ -66,7 +68,7 @@ export function Location(props) {
                   <Delete />
                 </IconButton>
               } ></CardHeader>
-            <CardActionArea component={Link} to={location.path} replace >
+            <CardActionArea >
               <CardContent className={classes.cardrow}>
                 <Typography component="h4">{location.title}</Typography>
               </CardContent>
@@ -100,8 +102,7 @@ export function Location(props) {
         <AddLocationDialog
           ref={dialogRef}
           onClose={() => { setDialogOpen(false) }}
-          open={dialogOpen}
-          currentPath={locationData.path} />
+          open={dialogOpen} />
       </Box>
     </div>
   )

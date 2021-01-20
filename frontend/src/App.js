@@ -1,9 +1,18 @@
 import './App.css';
-import {Button} from '@material-ui/core'
 import MiniDrawer from './Drawer';
-// import MiniDrawer from './testConnect'
+import React from 'react'
+import { Login } from './components/Login';
+import { AuthContext } from './contexts'
+import { SnackbarProvider } from 'notistack';
 
 function App() {
+  const [auth, setAuth] = React.useState({
+    haslogin: false,
+    name: '',
+    password: '',
+    identity: "User"
+  });
+
   return (
     <div className="App">
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
@@ -12,7 +21,15 @@ function App() {
         name="viewport"
         content="minimum-scale=1, initial-scale=1, width=device-width"
       />
-      <MiniDrawer></MiniDrawer>
+      <AuthContext.Provider value={auth}>
+        <SnackbarProvider maxSnack={3}>
+          {auth.haslogin ? (
+            <MiniDrawer setAuth={setAuth} />
+          ) : (
+              <Login setAuth={setAuth} />
+            )}
+        </SnackbarProvider>
+      </AuthContext.Provider>
     </div>
   );
 }

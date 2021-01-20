@@ -61,15 +61,15 @@ export function ShelfGrid(props){
   const handleDelete = async () => {
     const req = {
       path: props.path,
-      itemlist: selection.map((e)=>{return {id: e}})
+      itemlist: selection
     }
     console.log(req);
 
   }
 
   useEffect(()=>{
-    getData(props.path);
-  }, [props.path, dialogOpen])
+    props.getData();
+  }, [props.path, addDialogOpen])
 
   return (
     <div>
