@@ -9,6 +9,7 @@ import { Location } from './components/Location'
 import { makeStyles } from '@material-ui/core/styles';
 import { defaultData, getLocationData } from './Connection'
 import { Empty } from './components/Empty'
+import { ShelfGrid } from './components/ShelfGrid'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,20 +60,18 @@ export default function MainArea() {
           getData={getLocationData}
           setData={setPageData} />
       ) : pageData.template === "ShelfTable" ? (
-        <ShelfTable1 
-          path={path} 
-          pageData={pageData} 
-          getData={getLocationData}
-          setData={setPageData} />
-      ) : pageData.template === "Empty" ? (
-        <Empty 
+        <ShelfGrid 
           path={path} 
           pageData={pageData} 
           getData={getLocationData}
           setData={setPageData} />
       ) : (
-            <p>Loading</p>
-          )}
+        <Empty 
+          path={path} 
+          pageData={pageData} 
+          getData={getLocationData}
+          setData={setPageData} />
+      )}
     </div>
   )
 }
