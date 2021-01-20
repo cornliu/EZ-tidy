@@ -28,8 +28,14 @@ export function AddLocationDialog(props){
 
   const getTimeString = ()=>{
     const a = new Date();
-    console.log(a);
-    return a.toISOString()
+    const year = ("0000" + String(a.getFullYear())).slice(-4)
+    const month = ("0000" + String(a.getMonth()+1)).slice(-2)
+    const day = ("0000" + String(a.getDay())).slice(-2)
+    const hour = ("0000" + String(a.getHours())).slice(-2)
+    const minute = ("0000" + String(a.getMinutes())).slice(-2)
+    const str = year + "/" +month+"/"+day+" "+hour+":"+minute;
+    console.log(str);
+    return str
   }
 
   const handleConfirm = async ()=>{

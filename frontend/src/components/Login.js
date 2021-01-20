@@ -1,39 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  List, ListItem, ListItemText,
-  Avatar, DialogTitle, Dialog, ListItemAvatar, TextField, InputAdornment, DialogActions, Button
+  List, ListItem, ListItemText, Avatar, DialogTitle, 
+  Dialog, ListItemAvatar, TextField, DialogActions, Button
 } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons'
-import PropTypes from 'prop-types';
+import { loginToServer } from '../Connection';
 
 export function LoginDialog(props) {
-  const { auth, setAuth, open, onClose } = props;
-  const [login, setLogin] = useState(auth.haslogin);
-  const [name, setName] = useState(auth.name);
-  const [password, setPassword] = useState(auth.password);
+  const [login, setLogin] = useState(props.auth.haslogin);
+  const [name, setName] = useState(props.auth.name);
+  const [password, setPassword] = useState(props.auth.password);
 
-  const tryLogin = () => {
+  const tryLogin = async () => {
     const user = {
       name: name,
       password: password,
     }
     if (name && password) {
-      console.log("try login")
-      console.log(user)
+      const msg = (await loginToServer(user));
+      console.log("try login:", msg)
+      if (msg===true){
+        props.setAuth({
+          haslogin: true,
+          name: name,
+          password: password
+        })
+        props.onClose();
+      }
     }
   }
 
+  useEffect(()=>{
+    setLogin(props.auth.haslogin);
+    setName(props.auth.name);
+    setPassword(props.auth.password);
+  }, [props.auth])
+
   const trySignOut = () => {
-    const user = {
-      name: name,
-      password: password,
-    }
     console.log("try sign out")
-    console.log(user)
+    props.setAuth({
+      haslogin: false,
+      name: name,
+      password: ""
+    })
   }
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open}>
+    <Dialog onClose={props.onClose} aria-labelledby="simple-dialog-title" open={props.open}>
       {login ? (
         <DialogTitle id="dialog-title">
           {name}
