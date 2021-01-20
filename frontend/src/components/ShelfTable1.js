@@ -5,15 +5,7 @@ import {
   TableRow, Paper, Typography, Button 
 } from '@material-ui/core'
 import { AddItemDialog } from './AddItem';
-import { locationData_Home } from '../testcases';
-
-const defaultData = {
-  title: "Loading...",
-  locationlist: [],
-  itemlist: [],
-  path: "/loading",
-  template: "ShelfTable"
-}
+import { defaultData } from '../Connection';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,23 +21,24 @@ const useStyles = makeStyles((theme) => ({
 
 export function ShelfTable1(props){
   const classes = useStyles();
-  const [pageData, setPageData] = useState(defaultData);
+  let pageData = props.pageData;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogRef, setDialogRef] = useState(null)
 
   const getData = async ()=>{
-    setPageData(await props.getData(props.path));
+    props.setData(await props.getData(props.path));
     console.log(pageData);
   }
 
   useEffect(()=>{
     getData(props.path);
-  }, [props, dialogOpen])
+  }, [props.path, dialogOpen])
 
   return (
     <div>
       <div>
         <Typography variant="h3">{pageData.title}</Typography>
+        <Typography >{pageData.description}</Typography>
         <Button onClick={()=>{setDialogOpen(true)}}>Add item</Button>
         <AddItemDialog 
           onClose={()=>{setDialogOpen(false)}} 

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom';
 import { Card, CardActionArea, CardActions, CardContent, Typography } from '@material-ui/core';
 import { AddLocationDialog } from './AddLocation';
+import { AddItemDialog } from './AddItem'
 import { defaultData } from '../Connection';
-
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -22,20 +21,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export function Location(props){
+export function Empty(props){
   const classes = useStyles();
   let locationData = props.pageData;
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [addItemDialogOpen, setAddItemDialogOpen] = useState(false);
+  const [addLocationDialogOpen, setAddLocationDialogOpen] = useState(false);
   const [dialogRef, setDialogRef] = useState(null)
 
   const getData = async ()=>{
+    console.log("Query from Empty");
     props.setData(await props.getData(props.path));
-    // console.log(locationData);
   }
 
   useEffect(()=>{
     getData(props.path);
-  }, [props.path, dialogOpen])
+  }, [props.path, addItemDialogOpen, addLocationDialogOpen])
 
   return (
     <div>
@@ -44,26 +44,28 @@ export function Location(props){
         <Typography >{locationData.description}</Typography>
       </div>
       <div className={classes.card}>
-        {locationData.locationlist.map((location)=>(
-          <Card key={location.path} component={Link} elevation={3} to={location.path} replace>
-            <CardActionArea>
-              <CardContent width={1} height={1}>
-                <Typography >{location.title}</Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        ))}
-        <Card key="newlocation" elevation={3} onClick={()=>{setDialogOpen(true)}}>
+        <Card key="newitem"  elevation={3} onClick={()=>{setAddItemDialogOpen(true)}}>
           <CardActionArea>
             <CardContent>
-              <Typography>Add New Location Here.</Typography>
+              <Typography>Add the first item</Typography>
+            </CardContent>
+          </CardActionArea>
+        </Card>
+        <Card key="newlocation" elevation={3} onClick={()=>{setAddLocationDialogOpen(true)}}>
+          <CardActionArea>
+            <CardContent>
+              <Typography>Add the first location</Typography>
             </CardContent>
           </CardActionArea>
         </Card>
         <AddLocationDialog 
           ref={dialogRef} 
-          onClose={()=>{setDialogOpen(false)}} 
-          open={dialogOpen} 
+          onClose={()=>{setAddLocationDialogOpen(false)}} 
+          open={addLocationDialogOpen} 
+          currentPath={locationData.path} />
+        <AddItemDialog 
+          onClose={()=>{setAddItemDialogOpen(false)}} 
+          open={addItemDialogOpen} 
           currentPath={locationData.path} />
       </div>
     </div>

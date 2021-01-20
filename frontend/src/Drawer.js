@@ -5,21 +5,19 @@
 import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { 
-  Drawer, AppBar, Toolbar, List, CssBaseline, Typography, 
-  Divider, IconButton, ListItem, ListItemIcon, ListItemText ,
-  Avatar, DialogTitle, Dialog, ListItemAvatar, 
+import {
+  Drawer, AppBar, Toolbar, List, CssBaseline, Typography,
+  Divider, IconButton, ListItem, ListItemIcon, ListItemText,
+  Avatar, DialogTitle, Dialog, ListItemAvatar,
 } from '@material-ui/core';
 import { Menu, ChevronLeft, ChevronRight, Add, Home, Room, FormatListNumbered, Error } from '@material-ui/icons'
-import { Link, Switch, Route } from "react-router-dom"
+import { Link, Switch, Route, Redirect } from "react-router-dom"
 // import { sendData } from './useSend'
-import { message ,Button ,Input } from 'antd'
+import { message, Button, Input } from 'antd'
 import MainArea from './MainArea'
 import { pathList } from './testcases'
 import PropTypes from 'prop-types';
-// import { UserAvatar } from './login';
-
-
+import { UserAvatar } from './login';
 import { defaultData, getLocationData } from './Connection';
 import { Location } from './components';
 // import { pathList } from './testcases'
@@ -82,9 +80,15 @@ const useStyles = makeStyles((theme) => ({
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
+  title: {
+    flexGrow: 1,
+  },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+  },
+  avatar: {
+    margin: theme.spacing(1),
   },
 }));
 
@@ -93,6 +97,12 @@ export default function MiniDrawer() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [pathList, setPathList] = useState([]);
+  const [auth, setAuth] = useState({
+    haslogin: false,
+    name: '',
+    password: '',
+  });
+  const [pageData, setPageData] = useState(defaultData);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -122,20 +132,20 @@ export default function MiniDrawer() {
       }
     }
   };
-  const updatePathList = async ()=>{
+  const updatePathList = async () => {
     const tmp_Data = await getLocationData("/");
-    if (tmp_Data.locationlist){
+    if (tmp_Data.locationlist) {
       console.log("Get pathList!");
       console.log(tmp_Data.locationlist);
       setPathList(tmp_Data.locationlist);
     }
-    else{
+    else {
       console.log("Error! can't find location Data!");
       console.log(tmp_Data);
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     updatePathList();
   }, [])
 
@@ -160,10 +170,12 @@ export default function MiniDrawer() {
           >
             <Menu />
           </IconButton>
-          <Typography variant="h6" noWrap>
+          <Typography variant="h6" className={classes.title}>
             EZ Tidy
           </Typography>
-          {/* <UserAvatar style="float:right" setLogin={setLogin}/> */}
+          {auth && (
+            <UserAvatar className={classes.avatar} auth={auth} setAuth={setAuth} />
+          )}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -191,31 +203,28 @@ export default function MiniDrawer() {
         <Divider />
         <List>
           {pathList.map((option) => option.template === "Location" ? (
-            <ListItem button component={Link} key={option.path} to={option.path} >
+            <ListItem button component={Link} key={option.path} to={option.path} replace >
               <ListItemIcon><Room /></ListItemIcon>
               <ListItemText primary={option.title} />
             </ListItem>
-          ): option.template === "ShelfTable" ? (
-            <ListItem button component={Link} key={option.path} to={option.path} >
+          ) : option.template === "ShelfTable" ? (
+            <ListItem button component={Link} key={option.path} to={option.path} replace >
               <ListItemIcon><FormatListNumbered /></ListItemIcon>
               <ListItemText primary={option.title} />
             </ListItem>
-          ): (
-            <ListItem button component={Link} key={option.path} to={option.path} >
-              <ListItemIcon><Error /></ListItemIcon>
-              <ListItemText primary={option.title} />
-            </ListItem>
-          ))}
+          ) : (
+                <ListItem button component={Link} key={option.path} to={option.path} replace >
+                  <ListItemIcon><Error /></ListItemIcon>
+                  <ListItemText primary={option.title} />
+                </ListItem>
+              ))}
         </List>
       </Drawer>
       <Switch>
-        <Route exact path="/">
-          <div className={classes.content}>
-            <div className={classes.toolbar} />
-            <Location path="/" getData={getLocationData} />
-          </div>
-        </Route>
-        <Route path="/:currentPath" children={
+        {/* <Route exact path="/">
+          <Redirect to="/root" />
+        </Route> */}
+        <Route path="/" children={
           <MainArea className={classes.content} />
         } />
       </Switch>

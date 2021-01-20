@@ -46,7 +46,7 @@ export function AddItemDialog(props){
 
   return (
     <Dialog onClose={()=>{onClose()}} open={open} className={classes.dialog}>
-      <DialogTitle id="addlocation">Add Location Here!</DialogTitle>
+      <DialogTitle id="addlocation">Add Item Here!</DialogTitle>
       <List>
         <ListItem>
           <TextField fullWidth id="name" label="Name" onChange={(event)=>{setName(event.target.value)}} />
