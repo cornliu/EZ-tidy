@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link, useHistory } from 'react-router-dom';
 import {
@@ -6,8 +6,10 @@ import {
   CardHeader, IconButton, Typography, Box
 } from '@material-ui/core';
 import { AddLocationDialog } from './AddLocation';
-import { defaultData } from '../Connection';
+import { defaultData, deleteLocation } from '../Connection';
 import { Add, Delete, Folder } from '@material-ui/icons';
+import { AuthContext } from '../contexts';
+import { useSnackbar } from 'notistack';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -37,15 +39,24 @@ export function Location(props) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogRef, setDialogRef] = useState(null)
   const history = useHistory();
-
-  const getData = async () => {
-    props.setData(await props.getData(props.path));
-    // console.log(locationData);
-  }
+  const auth = useContext(AuthContext);
+  const {enqueueSnackbar} = useSnackbar()
 
   useEffect(()=>{
     props.getData();
   }, [props.path, dialogOpen])
+
+  const handleDelete = async (path) => {
+    const req = {
+      path: path,
+      parentpath: history.location.pathname,
+      username: auth.name,
+    }
+    const {status, data} = await deleteLocation(req)
+    enqueueSnackbar(data, {variant: status})
+    console.log("delete location");
+    console.log(req)
+  }
 
   return (
     <div>
@@ -58,17 +69,20 @@ export function Location(props) {
           <Card key={location.path} elevation={3} className={classes.card}
             onClick={() => history.push(location.path)} >
             <CardHeader
-              avatar={
-                <Avatar>
-                  <Folder />
-                </Avatar>
-              }
+              // avatar={
+              //   <Avatar>
+              //     <Folder />
+              //   </Avatar>
+              // }
               action={
-                <IconButton>
+                <IconButton onClick={()=>handleDelete(location.path)}>
                   <Delete />
                 </IconButton>
               } ></CardHeader>
             <CardActionArea >
+              <Avatar>
+                <Folder />
+              </Avatar>
               <CardContent className={classes.cardrow}>
                 <Typography component="h4">{location.title}</Typography>
               </CardContent>

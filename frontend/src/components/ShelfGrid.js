@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { 
   DataGrid
 } from '@material-ui/data-grid'
 import { Typography, Button, Fab } from '@material-ui/core'
 import { AddItemDialog } from './AddItem';
-import { defaultData } from '../Connection';
+import { defaultData, deleteItems } from '../Connection';
 import { Add, Delete } from '@material-ui/icons';
+import { AuthContext } from '../contexts';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,6 +35,7 @@ export function ShelfGrid(props){
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogRef, setDialogRef] = useState(null);
   const [selection, setSelection] = useState([])
+  const auth = useContext(AuthContext);
 
   const columns = [
     { field: 'name', headerName: 'Name', width: 130 },
@@ -61,15 +63,18 @@ export function ShelfGrid(props){
   const handleDelete = async () => {
     const req = {
       path: props.path,
-      itemlist: selection
+      itemlist: selection,
+      username: auth.name,
+      identity: auth.identity
     }
     console.log(req);
-
+    await deleteItems(req);
+    props.getData();
   }
 
   useEffect(()=>{
     props.getData();
-  }, [props.path, addDialogOpen])
+  }, [props.path, dialogOpen])
 
   return (
     <div>

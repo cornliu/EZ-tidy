@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
 export function AddItemDialog(props){
   const { onClose, open, currentPath } = props;
   const [name, setName] = useState("");
-  const [owner, setOwner] = useState("ric");
   const [description, setDescription] = useState("");
   const classes = useStyles();
   const auth = React.useContext(AuthContext)
@@ -45,7 +44,7 @@ export function AddItemDialog(props){
     const item = {
       name: name, 
       path: currentPath,
-      owner: owner,
+      owner: auth.name,
       time: getTimeString(),
       username: auth.name,
       description: description

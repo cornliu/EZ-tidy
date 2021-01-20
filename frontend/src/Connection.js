@@ -9,6 +9,7 @@ export const defaultData = {
   title: "Loading...",
   locationlist: [],
   itemlist: [],
+  commonlist: [],
   path: "/loading",
   template: ""
 }
@@ -103,6 +104,23 @@ export const deleteItems = async (req) => {
   let status = "success";
   try {
     const res = await instance.post("/remove/item", req);
+    data = res.data;
+  } catch (err) {
+      status = "error";
+      data = err.response;
+  } finally {
+    return {
+      status: status,
+      data: data
+    }
+  }
+}
+
+export const deleteLocation = async (req) => {
+  let data = null;
+  let status = "success";
+  try {
+    const res = await instance.post("/remove/location", req);
     data = res.data;
   } catch (err) {
       status = "error";
