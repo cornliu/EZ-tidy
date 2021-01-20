@@ -6,75 +6,66 @@ const router = express.Router()
 router.post('/', async (req, res) => {
     const path = req.body.path
     console.log(path);
-    await Location.findOne({ path: path }).populate('locationlist itemlist').exec(async (err, loc) => {
-        // console.log(loc);
-        if (!loc) res.status(404).send(`Path ${path} does not exist!!`)
-        else if (loc.locationlist.length > 0) {
-            let L_list = []
-            for (let i = 0; i < loc.locationlist.length; i++) {
-                let temp = ''
-                if (loc.locationlist[i].locationlist.length > 0) temp = 'Location'
-                else if(loc.locationlist[i].itemlist.length > 0) temp = 'ShelfTable'
-                else temp = 'Empty'
-                let a = {
-                    title: loc.locationlist[i].name,
-                    path: loc.locationlist[i].path,
-                    description: loc.locationlist[i].description,
-                    template: loc.locationlist[i].template
-                }
-                L_list.push(a)
+    const loc = await Location.findOne({ path: path }).populate('locationlist itemlist')
+    if (!loc) res.status(404).send(`Path ${path} does not exist!!`)
+    else if (loc.locationlist.length > 0) {
+        let L_list = []
+        for (let i = 0; i < loc.locationlist.length; i++) {
+            let a = {
+                title: loc.locationlist[i].name,
+                path: loc.locationlist[i].path,
+                description: loc.locationlist[i].description,
+                template: loc.locationlist[i].template
             }
-            res.send({
-                title: loc.name, 
-                time: loc.time,
-                description: loc.description,
-                locationlist: L_list,
-                path: loc.path,
-                itemlist: [],
-                template: loc.template
-            })
+            L_list.push(a)
         }
-        else if (loc.itemlist.length > 0) {
-            let I_list = []
-            for (let i = 0; i < loc.itemlist.length; i++) {
-                await User.findOne({ _id: loc.itemlist[i].owner }, (err, u) => {
-                    let item = {
-                        id: loc.itemlist[i]._id,
-                        name: loc.itemlist[i].name,
-                        time: loc.itemlist[i].time,
-                        owner: u.name,
-                        description: loc.itemlist[i].description
-                    }
-                    I_list.push(item)
-                })
+        res.send({
+            title: loc.name,
+            time: loc.time,
+            description: loc.description,
+            locationlist: L_list,
+            path: loc.path,
+            itemlist: [],
+            template: loc.template
+        })
+    }
+    else if (loc.itemlist.length > 0) {
+        let I_list = []
+        for (let i = 0; i < loc.itemlist.length; i++) {
+            const u = await User.findOne({ _id: loc.itemlist[i].owner })
+            let item = {
+                id: loc.itemlist[i]._id,
+                name: loc.itemlist[i].name,
+                time: loc.itemlist[i].time,
+                owner: u.name,
+                description: loc.itemlist[i].description
             }
-            res.send({
-                title: loc.name,
-                time: loc.time,
-                description: loc.description,
-                locationlist: [],
-                path: loc.path,
-                itemlist: I_list,
-                template: loc.template
-            })
+            I_list.push(item)
+
         }
-        else {
-            res.send({
-                title: loc.name,
-                time: loc.time,
-                description: loc.description,
-                path: loc.path,
-                locationlist: [],
-                itemlist: [],
-                template: loc.template
-            })
-        }
-    })
-    await Location.findOne({path:req.body.path}).exec((err,qq)=>{
+        res.send({
+            title: loc.name,
+            time: loc.time,
+            description: loc.description,
+            locationlist: [],
+            path: loc.path,
+            itemlist: I_list,
+            template: loc.template
+        })
+    }
+    else {
+        res.send({
+            title: loc.name,
+            time: loc.time,
+            description: loc.description,
+            path: loc.path,
+            locationlist: [],
+            itemlist: [],
+            template: loc.template
+        })
+    }
+    await Location.findOne({ path: req.body.path }).exec((err, qq) => {
         console.log(qq);
     })
-    // await User.findOne({_id:'6007f2be83d1e744d526ab4f'},async (err,qq)=>{
-    //     console.log(qq);
-    // })
 })
 export default router

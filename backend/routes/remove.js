@@ -7,103 +7,80 @@ import User from '../models/user.js'
 const router = express.Router()
 router.post('/item', async (req, res) => {
     for (let i = 0; i < req.body.itemlist.length; i++) {
+        let item = await Item.findOne({ _id: req.body.itemlist[i] }).populate('owner')
+        console.log(item.owner);
+        if (req.body.username !== item.owner.name && req.body.identity !== 'Admin') {
+            return res.status(403).send('There are something not belongs to you!!')
+        }
+    } 
+    for (let i = 0; i < req.body.itemlist.length; i++) {
         await Item.deleteOne({ _id: req.body.itemlist[i] }, (err, ss) => {
             if (!err) console.log(`delete ${req.body.itemlist[i]}`);
         })
     }
-    await Location.findOne({ path: req.body.path }, async (err, loc) => {
-        if (!loc) console.log(`Can't find ${req.body.path}`);
-        let newitemlist = loc.itemlist.filter((v) => {
-            return (req.body.itemlist.indexOf(v.toString()) == -1)
-        })
-        if (newitemlist.length === 0) {
-            await loc.updateOne({ itemlist: newitemlist, template:'Empty' }, async (err, ss) => {
-                if (err) console.error(err);
-                else console.log(loc);
-                res.status(200).send('delete done')
-            })
-        }
-        else{
-            await loc.updateOne({ itemlist: newitemlist, template:'Empty' }, async (err, ss) => {
-                if (err) console.error(err);
-                else console.log(loc);
-                res.status(200).send('delete done')
-            })
-        }
+    const loc = await Location.findOne({ path: req.body.path })
+    if (!loc) {
+        console.log(`Can't find ${req.body.path}`);
+        return res.status(404).send(`Can't find ${req.body.path}`)
+    }
+    let newitemlist = loc.itemlist.filter((v) => {
+        return (req.body.itemlist.indexOf(v.toString()) == -1)
     })
-    // console.log('26');
-    // for (let i = 0; i < req.body.itemlist.length; i++) {
-    //     await Item.findOne({ _id: req.body.itemlist[i].id }).exec(async (err, item) => {
-    //         if (!item) {
-    //             console.log(`${req.body.itemlist[i].id} is not found`);
-    //             // return res.status(404).send(`${req.body.itemlist[i].id} is not found`)
-    //         }
-    //         else {
-    //             await Item.deleteOne({ _id: req.body.itemlist[i].id }, () => console.log(`${req.body.itemlist[i].id} has been removed`))
-    //             await Location.findOne({ path: req.body.path }, async (err, loc) => {
-    //                 console.log(loc);
-    //                 const index = loc.itemlist.indexOf(req.body.itemlist[i].id)
-    //                 loc.itemlist.splice(index, 1)
-    //                 if (loc.itemlist.length === 0) {
-    //                     await loc.updateOne({ itemlist: loc.itemlist, template: 'Empty' }, (err, ss) => {
-    //                         if (err) console.error(err);
-    //                         else console.log(`${loc.name} update complete`);
-    //                         // res.send(`${req.body.itemlist[i].id} has been removed`)
-    //                     })
-    //                 }
-    //                 else {
-    //                     await loc.updateOne({ itemlist: loc.itemlist }, (err, ss) => {
-    //                         if (err) console.error(err);
-    //                         else console.log(`${loc.name} update complete`);
-    //                         // res.send(`${req.body.itemlist[i].id} has been removed`)
-    //                     })
-    //                 }
-    //             })
-    //         }
-    //     })
-    // }
-    // res.send(`Item has been removed`)
+    console.log(newitemlist);
+    if (newitemlist.length === 0 && loc.path !== '/') {
+        await loc.update({ itemlist: newitemlist, template: 'Empty' }, async (err, ss) => {
+            if (err) console.error(err);
+            else console.log(loc);
+            return res.status(200).send('delete done')
+        })
+    }
+    else {
+        await loc.update({ itemlist: newitemlist }, async (err, ss) => {
+            if (err) console.error(err);
+            else console.log(loc);
+            return res.status(200).send('delete done')
+        })
+    }
 })
 router.post('/location', async (req, res) => {
     if (req.body.path === '/') {
         console.log(`You can't delete root '/'`);
-        res.status(405).send(`You can't delete root '/'`)
+        return res.status(405).send(`You can't delete root '/'`)
+    }
+    const user = await User.findOne({ name: req.body.username })
+    if (user.identity !== 'Admin'){
+        return res.status(403).send(`You are not admin, you can't delete Location.`)
+    }
+    const loc = await Location.findOne({ path: req.body.path })
+    if (loc.itemlist.length > 0 || loc.locationlist.length > 0) {
+        console.log(`Something under ${req.body.path}. Check out to prevent deleteing something importment`)
+        return res.status(405).send(`Something under ${req.body.path}. Check out to prevent deleteing something importment`)
+    }
+    await Location.deleteOne({ path: req.body.path }, () => console.log(`${req.body.path} has been removed`))
+    const parentloc = await Location.findOne({ path: req.body.parentpath })
+    let index = -1
+    for (let i = 0; i < parentloc.locationlist.length; i++) {
+        console.log('============================');
+        console.log(req.body.id);
+        console.log(parentloc.locationlist[i]);
+        console.log('============================');
+        if (parentloc.locationlist[i].toString() === req.body.id) {
+            index = i
+        }
+    }
+    parentloc.locationlist.splice(index, 1)
+    if (parentloc.locationlist.length === 0 && parentloc.path !== '/') {
+        await parentloc.update({ locationlist: parentloc.locationlist, template: 'Empty' })
+        console.log(`${parentloc.name} update complete`);
+        return res.send(`${req.body.id} has been removed`)
     }
     else {
-        await Location.findOne({ path: req.body.path }, async (err, loc) => {
-            if (loc.itemlist.length > 0 || loc.locationlist.length > 0) {
-                console.log(`Something under ${req.body.path}. Check out to prevent deleteing something importment`)
-                res.status(405).send(`Something under ${req.body.path}. Check out to prevent deleteing something importment`)
-            }
-            else {
-                await Location.deleteOne({ path: req.body.path }, () => console.log(`${req.body.path} has been removed`))
-                await Location.findOne({ path: req.body.parentpath }, async (err, loc) => {
-                    let index = -1
-                    for (let i=0;i<loc.locationlist.length;i++){
-                        if (loc.locationlist[i].toString() === req.body.id){
-                            index = i
-                        }
-                    }
-                    console.log(index);
-                    loc.locationlist.splice(index, 1)
-                    if (loc.locationlist.length === 0) {
-                        await loc.updateOne({ locationlist: loc.locationlist, template: 'Empty' }, (err, ss) => {
-                            if (err) console.error(err);
-                            else console.log(`${loc.name} update complete`);
-                            res.send(`${req.body.id} has been removed`)
-                        })
-                    }
-                    else {
-                        await loc.updateOne({ itemlist: loc.itemlist }, (err, ss) => {
-                            if (err) console.error(err);
-                            else console.log(`${loc.name} update complete`);
-                            res.send(`${req.body.id} has been removed`)
-                        })
-                    }
-                })
-            }
-        })
+        await parentloc.update({ locationlist: parentloc.locationlist })
+        console.log(`${parentloc.name} update complete`);
+        return res.send(`${req.body.id} has been removed`)
     }
+
+
 
 })
 router.get('/All', async (req, res) => {
@@ -132,6 +109,6 @@ router.get('/All', async (req, res) => {
         if (err) console.error(err);
         else console.log('Admin is created');
     })
-    res.send('Delete All');
+    return res.send('Delete All');
 })
 export default router

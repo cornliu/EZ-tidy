@@ -28,96 +28,10 @@ mongoose.connect(process.env.MONGO_URL, dbOptions)
     })
 const db = mongoose.connection;
 
-
-const createuser = async (name, password, identity) => {
-    await User.findOne({ name: name }, async (err, someone) => {
-        if (err) {
-            console.error(err);
-        }
-        else if (someone) {
-            console.log(`User ${name} has been created!!`);
-        }
-        else {
-            const user = new User({
-                name: name,
-                password: password,
-                identity: identity
-            })
-            try {
-                await user.save((err) => {
-                    if (err) console.error(err);
-                    console.log(`User ${name} is saved`);
-                })
-            } catch (err) {
-                console.log('err' + err);
-            }
-        }
-    })
-}
-const createitem = async (name, time, description, ownername, parentpath) => {
-    await User.findOne({ name: ownername }, async (err, user) => {
-        // console.log(user);
-        if (err) console.error(err);
-        else {
-            // console.log(user._id);
-            const item = new Item({
-                name: name,
-                time: time,
-                description: description,
-                owner: user._id
-            })
-            await item.save((err) => {
-                if (err) console.error(err)
-                console.log(`item ${name} is saved`);
-            })
-
-            Location.findOne({ path: parentpath }, async (err, loc) => {
-                // console.log(loc);
-                if (err) console.error(err);
-                await loc.updateOne({ itemlist: [...loc.itemlist, item._id] }, (err, ss) => {
-                    if (err) console.error(err);
-                    // else console.log('success:', ss);
-                })
-            })
-        }
-    })
-}
-const createlocation = async (name, template, time, description, path, parentpath = '/') => {
-    await Location.findOne({ path: parentpath }, (err, par) => {
-        if (err) console.error(err);
-        if (!par) console.log(`${parentpath} is not exits`);
-        else {
-            Location.findOne({ path: path }, async (err, location) => {
-                if (err) console.error(err);
-                else if (location) console.log(`${location.path} has been created`);
-                else {
-                    const loc = new Location({
-                        name: name,
-                        time: time,
-                        template: template,
-                        description: description,
-                        path: path,
-                        locationlist: [],
-                        itemlist: []
-                    })
-                    await loc.save((err) => {
-                        if (err) console.error(err);
-                        else console.log(`${name} is created`);
-                    })
-                    par.updateOne({ locationlist: [...par.locationlist, loc._id] }, (err, ss) => {
-                        if (err) console.error(err);
-                        // else console.log('success:', ss);
-                    })
-                }
-            })
-        }
-    })
-}
-
 app.use(bodyParser.json())
 app.use(cors())
 app.get('/', async (req, res) => {
-    Location.findOne({path:'/bl'}).exec((err,qq)=>{
+    Location.findOne({path:'/'}).exec((err,qq)=>{
         console.log(qq);
     })
     res.send('Create');
