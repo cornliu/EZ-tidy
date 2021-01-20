@@ -31,7 +31,7 @@ const db = mongoose.connection;
 app.use(bodyParser.json())
 app.use(cors())
 app.get('/', async (req, res) => {
-    Location.findOne({path:'/'}).exec((err,qq)=>{
+    Location.findOne({path:'/bl'}).exec((err,qq)=>{
         console.log(qq);
     })
     res.send('Create');

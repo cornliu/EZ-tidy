@@ -54,6 +54,7 @@ router.post('/', async (req, res) => {
         })
     }
     else {
+        // console.log(loc.description);
         res.send({
             title: loc.name,
             time: loc.time,
