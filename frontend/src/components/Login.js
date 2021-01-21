@@ -185,8 +185,8 @@ export function Login(props) {
           password: password,
           identity: name === "Admin" ? "Admin" : "User"
         })
-        enqueueSnackbar(data, { variant: status });
       }
+      enqueueSnackbar(data, { variant: status });
     }
   }
 
@@ -240,14 +240,14 @@ export function Login(props) {
             className={classes.textfield} type='password'
             onChange={(e) => { setPassword(e.target.value) }} />
         </CardContent>
-        <CardActions className={classes.cardcontent}>
-          <Button variant="contained" color="primary"
-            onClick={() => tryLogin()} >
-            Log in
-          </Button>
+        <CardActions>
           <Button variant="text" color="primary"
             onClick={() => createUser()} >
             Register
+          </Button>
+          <Button variant="contained" color="primary"
+            onClick={() => tryLogin()} >
+            Log in
           </Button>
         </CardActions>
       </Card>

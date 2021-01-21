@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import {
   Dialog, TextField, DialogTitle,
@@ -27,7 +27,7 @@ export function AddLocationDialog(props) {
   const currentPath = (history.location.pathname === "/") ? ("") : (history.location.pathname);
   const [title, setTitle] = useState("");
   const [subpath, setSubPath] = useState("");
-  const [discription, setDiscription] = useState("");
+  const [description, setDescription] = useState("");
   const classes = useStyles();
   const auth = React.useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar();
@@ -48,7 +48,7 @@ export function AddLocationDialog(props) {
     const location = {
       title: title,
       path: currentPath + "/" + subpath,
-      discription: discription,
+      description: description,
       template: "",
       time: getTimeString(),
       username: auth.name,
@@ -81,7 +81,7 @@ export function AddLocationDialog(props) {
             id="description"
             label="Description"
             multiline
-            onChange={(event) => { setDiscription(event.target.value) }} />
+            onChange={(event) => { setDescription(event.target.value) }} />
         </ListItem>
       </List>
       <DialogActions>
