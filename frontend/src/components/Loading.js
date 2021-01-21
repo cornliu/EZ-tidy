@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link } from 'react-router-dom';
 import {
-  Avatar, Card, CardActionArea, CardActions, CardContent,
-  CardHeader, IconButton, Typography, Box, CircularProgress
+  Box, CircularProgress
 } from '@material-ui/core';
-import { AddLocationDialog } from './AddLocation';
-import { defaultData } from '../Connection';
-import { Add, Delete, Folder } from '@material-ui/icons';
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,16 +22,6 @@ const useStyles = makeStyles((theme) => ({
 
 export function Loading(props) {
   const classes = useStyles();
-  const [dialogRef, setDialogRef] = useState(null)
-
-  // const getData = async () => {
-  //   props.setData(await props.getData(props.path));
-  //   // console.log(locationData);
-  // }
-
-  // useEffect(() => {
-  //   getData(props.path);
-  // }, [props.path, dialogOpen])
 
   return (
     <Box className={classes.root}>

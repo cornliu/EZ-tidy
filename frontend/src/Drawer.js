@@ -1,27 +1,19 @@
-// 網頁的模板
-// 包括AppBar及SideMenu
-// 主要內容在MainArea中
-
 import React, { useContext, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
   Drawer, AppBar, Toolbar, List, CssBaseline, Typography,
   Divider, IconButton, ListItem, ListItemIcon, ListItemText,
-  Avatar, DialogTitle, Dialog, ListItemAvatar,
 } from '@material-ui/core';
 import { 
-  Menu, ChevronLeft, ChevronRight, Add, Home, Room, 
+  Menu, ChevronLeft, ChevronRight, Home, Room, 
   FormatListNumbered, Error, ArrowBack 
 } from '@material-ui/icons'
-import { Link, Switch, Route, Redirect, useHistory } from "react-router-dom"
+import { Switch, Route, useHistory } from "react-router-dom"
 import { message, Button, Input } from 'antd'
 import MainArea from './MainArea'
-import { pathList } from './testcases'
-import PropTypes from 'prop-types';
-import { Login, UserAvatar } from './components/Login';
+import { UserAvatar } from './components/Login';
 import { defaultData, getLocationData } from './Connection';
-import { Location } from './components';
 import { AuthContext } from './contexts'
 import { useSnackbar } from 'notistack';
 

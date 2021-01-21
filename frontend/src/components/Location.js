@@ -1,17 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   Avatar, Card, CardActionArea, CardActions, CardContent, CardMedia,
-  CardHeader, IconButton, Typography, Box, Button, Divider
+  CardHeader, Typography, Box, Button, Divider
 } from '@material-ui/core';
 import { AddLocationDialog } from './AddLocation';
-import { defaultData, deleteLocation } from '../Connection';
-import { Add, Delete, Folder } from '@material-ui/icons';
+import { deleteLocation } from '../Connection';
+import { Add, Folder } from '@material-ui/icons';
 import { AuthContext } from '../contexts';
 import { useSnackbar } from 'notistack';
-import { AutoComplete } from 'antd';
-
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -63,7 +61,9 @@ const useStyles = makeStyles((theme) => ({
   cardmedia: {
     height: 0,
     paddingTop: '56.25%',
-    // flexShrink: 0,
+  },
+  cardimgbox: {
+    height: 154,
   },
   cardactionarea: {
     flexGrow: 1,
@@ -88,11 +88,12 @@ export function Location(props) {
     getData();
   }, [dialogOpen])
 
-  const handleDelete = async (path) => {
+  const handleDelete = async (path, id) => {
     const req = {
       path: path,
       parentpath: hookLocation.pathname,
       username: auth.name,
+      id: id
     }
     console.log("delete location");
     console.log(req)
@@ -109,7 +110,7 @@ export function Location(props) {
       </Box>
       <Divider />
       <Box className={classes.root}>
-        {locationData.locationlist.map((location) => (
+        {locationData.locationlist.map((location, index) => (
           <Card key={location.path} className={classes.card} component="div" >
             <CardHeader
               avatar={
@@ -120,11 +121,15 @@ export function Location(props) {
               titleTypographyProps={{ variant: 'h4', align: 'left' }}
               title={location.title}
             ></CardHeader>
-            <CardMedia className={classes.cardmedia}
-              image="https://media.ethicalads.io/media/images/2020/12/ea-logo.png"
+            {/* <CardMedia className={classes.cardmedia}
+              src={require("./imgs/" + String(index % 7) + ".jpg")}
+              // image="https://media.ethicalads.io/media/images/2020/12/ea-logo.png"
               title="Folder Img"
             >
-            </CardMedia>
+            </CardMedia> */}
+            <CardContent className={classes.cardimgbox}>
+              <img src = {require("./imgs/" + String(index % 7) + ".jpg")} />
+            </CardContent>
             <CardContent >
               <Typography
                 variant="body2"
@@ -145,7 +150,7 @@ export function Location(props) {
                 className={classes.cardbutton} >Enter</Button>
               {auth.identity === "Admin" && (
                 <Button size="small" variant="text" color="secondary"
-                  onClick={() => { handleDelete(location.path) }}
+                  onClick={() => { handleDelete(location.path, location.id) }}
                   className={classes.cardbutton} >DELETE</Button>
               )}
             </CardActions>

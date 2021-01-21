@@ -138,3 +138,20 @@ export const deleteLocation = async (req) => {
     }
   }
 }
+
+export const returnItemToServer = async (req) => {
+  let data = null;
+  let status = "success";
+  try {
+    const res = await instance.post("/add/returnitem", req);
+    data = res.data;
+  } catch (err) {
+    status = "error";
+    data = err.response.data;
+  } finally {
+    return {
+      status: status,
+      data: data
+    }
+  }
+}
