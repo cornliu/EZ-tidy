@@ -7,6 +7,7 @@ const locationSchema = new Schema({
     description: String,
     template: String,
     path: String,
+    image: String,
     locationlist: [{type: Schema.Types.ObjectId, ref: 'location'}],
     itemlist: [{type: Schema.Types.ObjectId, ref: 'item'}],
     commonitemlist: [{type: Schema.Types.ObjectId, ref: 'item'}]

@@ -73,12 +73,17 @@ router.post('/location', async (req, res) => {
             return res.status(405).send(`Itemlist is not empty, you can't add location in this location.`)
         }
         else {
+            let image = 'https://www.popdaily.com.tw/shaper/wp-content/uploads/2019/01/5pn9cgij8ko4c0wk884kksg0oqdtbs2-1000x626.jpg'
+            if (req.body.image !== ''){
+                image = req.body.image
+            }
             const loc = new Location({
                 name: req.body.title,
                 time: req.body.time,
                 template: 'Empty',
                 description: req.body.description,
                 path: req.body.path,
+                image: image,
                 locationlist: [],
                 itemlist: [],
                 commonitemlist: []

@@ -16,6 +16,7 @@ router.post('/', async (req, res) => {
                 title: loc.locationlist[i].name,
                 path: loc.locationlist[i].path,
                 id: loc.locationlist[i]._id,
+                image: loc.locationlist[i].image,
                 description: loc.locationlist[i].description,
                 template: loc.locationlist[i].template
             }
@@ -63,7 +64,7 @@ router.post('/', async (req, res) => {
             }
             CI_list.push(commonitem)
         }
-        res.send({
+        res.send({ 
             title: loc.name,
             time: loc.time,
             description: loc.description,
