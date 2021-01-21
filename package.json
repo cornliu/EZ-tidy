@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "engines": {
+    "node": "15.X"
+  },
   "dependencies": {
     "axios": "^0.21.1",
     "cors": "^2.8.5",
@@ -13,7 +16,7 @@
   "type": "module",
   "scripts": {
     "server": "nodemon server.js",
-    "start": "cd backend && node server.js",
+    "start": "node backend/server.js",
     "heroku-postbuild": "cd frontend && yarn && yarn build"
   }
 }
