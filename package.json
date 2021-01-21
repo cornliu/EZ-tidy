@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
@@ -10,25 +9,6 @@
     "dotenv-defaults": "^2.0.1",
     "express": "^4.17.1",
     "mongoose": "^5.11.12"
-=======
-  "name": "2020web-finalproject",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {},
-  "scripts": {
-    "preinstall": "cd ./frontend && yarn && cd ../backend && yarn",
-    "start": "cd ./backend && yarn server",
-    "server": "cd ./backend && yarn server",
-    "build": "cd ./frontend && yarn build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
->>>>>>> f4bd46b53520f462e77d38058359ed7eedc9ccab
   },
   "type": "module",
   "scripts": {
