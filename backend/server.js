@@ -12,7 +12,7 @@ import Queryrouter from './routes/query.js'
 import Checkrouter from './routes/accountcheck.js'
 dotenv.config();
 const app = express();
-app.use(express.static('../frontend/build'));
+app.use(express.static('/../frontend/build'));
 const port = process.env.PORT || 4000
 
 if (!process.env.MONGO_URL) {
