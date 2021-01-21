@@ -103,12 +103,12 @@ router.post('/location', async (req, res) => {
     if (parentloc.locationlist.length === 0 && parentloc.path !== '/') {
         await parentloc.update({ locationlist: parentloc.locationlist, template: 'Empty' })
         console.log(`${parentloc.name} update complete`);
-        return res.send(`${req.body.id} has been removed`)
+        return res.send(`${loc.name} has been removed`)
     }
     else {
         await parentloc.update({ locationlist: parentloc.locationlist })
         console.log(`${parentloc.name} update complete`);
-        return res.send(`${req.body.id} has been removed`)
+        return res.send(`${loc.name} has been removed`)
     }
 
 
