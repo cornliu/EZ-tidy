@@ -9,7 +9,6 @@ router.post('/', async (req, res) => {
     const loc = await Location.findOne({ path: path }).populate('locationlist itemlist commonitemlist')
     if (!loc) res.status(404).send(`Path ${path} does not exist!!`)
     else if (loc.locationlist.length > 0) {
-        console.log('loclist > 0');
         let L_list = []
         for (let i = 0; i < loc.locationlist.length; i++) {
             let a = {
