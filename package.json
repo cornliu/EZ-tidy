@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "engines": {
-    "node": "15.X"
+    "node": "10.X"
   },
   "dependencies": {
     "axios": "^0.21.1",
