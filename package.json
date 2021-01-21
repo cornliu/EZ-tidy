@@ -1,32 +1,19 @@
 {
-  "name": "2020web-finalproject",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {},
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cors": "^2.8.5",
+    "dotenv-defaults": "^2.0.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.12"
+  },
+  "type": "module",
   "scripts": {
-    "preinstall": "cd ./frontend && yarn && cd ../backend && yarn",
-    "start": "cd ./frontend && yarn start",
-    "server": "cd ./backend && yarn server",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "server": "nodemon server.js",
+    "start": "cd backend && node server.js",
+    "heroku-postbuild": "cd frontend && yarn && yarn build"
   }
 }
