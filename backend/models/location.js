@@ -8,7 +8,8 @@ const locationSchema = new Schema({
     template: String,
     path: String,
     locationlist: [{type: Schema.Types.ObjectId, ref: 'location'}],
-    itemlist: [{type: Schema.Types.ObjectId, ref: 'item'}]
+    itemlist: [{type: Schema.Types.ObjectId, ref: 'item'}],
+    commonitemlist: [{type: Schema.Types.ObjectId, ref: 'item'}]
 })
 const Location = mongoose.model('location', locationSchema)
 export default Location

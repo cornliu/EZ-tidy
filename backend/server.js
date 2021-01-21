@@ -10,6 +10,7 @@ import Addrouter from './routes/add.js'
 import Removerouter from './routes/remove.js'
 import Queryrouter from './routes/query.js'
 import Checkrouter from './routes/accountcheck.js'
+import { exec } from 'child_process';
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000
@@ -30,17 +31,30 @@ const db = mongoose.connection;
 
 app.use(bodyParser.json())
 app.use(cors())
-app.get('/', async (req, res) => {
-    Location.findOne({path:'/bl'}).exec((err,qq)=>{
-        console.log(qq);
-    })
+app.get('/', async (req, res) => { 
+    // Location.findOne({path:'/k'}).exec((err,qq)=>{
+    //     console.log(qq);
+    // }) 
+    const item = await Item.findOne({_id:"600923555dc40ddbe5bdb47b"})
+    console.log(item);
+    // const item = new Item({
+    //     name: 'aaa',
+    //     time: 'qqqqq',
+    //     description: '1234567898765432',
+    //     borrower: ' ',
+    //     owner: '60091903098e20dbd16f230a'
+    // })
+    // console.log(item);
+    // await item.save((err) => {
+    //     console.log(`item ${item._id} is saved`);
+    // })
     res.send('Create');
 });
 app.use('/add', Addrouter)
 app.use('/query', Queryrouter)
 app.use('/remove', Removerouter);
 app.use('/check', Checkrouter)
-db.once('open', () => {
+db.once('open', () => { 
     app.listen(port, () =>
         console.log(`Example app listening on port ${port}!`)
     );
