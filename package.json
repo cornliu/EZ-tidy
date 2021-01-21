@@ -7,7 +7,7 @@
     "preinstall": "cd ./frontend && yarn && cd ../backend && yarn",
     "start": "cd ./frontend && yarn start",
     "server": "cd ./backend && yarn server",
-    "build": "react-scripts build",
+    "build": "cd ./frontend && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
