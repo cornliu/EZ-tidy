@@ -14,7 +14,7 @@ import { message, Button, Input } from 'antd'
 import MainArea from './MainArea'
 import { UserAvatar } from './components/Login';
 import { defaultData, getLocationData } from './Connection';
-import { AuthContext } from './contexts'
+import { AuthContext, SetReloadContext } from './contexts'
 import { useSnackbar } from 'notistack';
 
 const drawerWidth = 240;
@@ -102,28 +102,6 @@ export default function MiniDrawer(props) {
   };
   const handleDrawerClose = () => {
     setOpen(false);
-  };
-  const displayStatus = (s) => {
-    if (s.msg) {
-      const { type, msg } = s
-      const content = {
-        content: msg,
-        duration: 0.5
-      }
-
-      switch (type) {
-        case 'success':
-          message.success(content)
-          break
-        case 'info':
-          message.info(content)
-          break
-        case 'danger':
-        default:
-          message.error(content)
-          break
-      }
-    }
   };
   const updatePathList = async () => {
     const {status, data} = await getLocationData("/");
@@ -226,7 +204,7 @@ export default function MiniDrawer(props) {
         </Drawer>
         <Switch>
           <Route path="/" children={
-            <MainArea className={classes.content} />
+            <MainArea className={classes.content} reNew={()=> updatePathList()} />
           } />
         </Switch>
       </ div>

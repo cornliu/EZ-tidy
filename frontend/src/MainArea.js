@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MainArea() {
+export default function MainArea(props) {
   const classes = useStyles();
   // const { currentPath } = useParams();
   let location = useLocation();
@@ -36,6 +36,7 @@ export default function MainArea() {
   let history = useHistory();
 
   const updatePageData = async () => {
+    props.reNew();
     setPath(history.location.pathname);
     console.log("UpdatePageData:", history.location.pathname)
     // enqueueSnackbar("Loading ...");

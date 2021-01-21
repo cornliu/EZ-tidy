@@ -101,7 +101,7 @@ export function Empty(props) {
             </CardContent>
           </CardActionArea>
         </Card>
-        {auth.identity === "Adnim" && (
+        {auth.identity === "Admin" && (
           <Card key="newlocation" elevation={3}
             onClick={() => { setAddLocationDialogOpen(true) }}
             className={classes.addcard}

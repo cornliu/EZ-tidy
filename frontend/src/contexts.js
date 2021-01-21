@@ -6,3 +6,5 @@ export const AuthContext = createContext({
   password: '',
   identity: 'Admin'
 });
+
+export const SetReloadContext = createContext(false);

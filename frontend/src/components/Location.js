@@ -10,6 +10,16 @@ import { deleteLocation } from '../Connection';
 import { Add, Folder } from '@material-ui/icons';
 import { AuthContext } from '../contexts';
 import { useSnackbar } from 'notistack';
+// import img0 from "./0.jpg"
+// import img1 from "./1.jpg"
+// import img2 from "./2.jpg"
+// import img3 from "./3.jpg"
+// import img4 from "./4.jpg"
+// import img5 from "./5.jpg"
+// import img6 from "./6.jpg"
+
+
+// const imgs = [img0, img1, img2, img3, img4, img5, img6]
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -121,15 +131,15 @@ export function Location(props) {
               titleTypographyProps={{ variant: 'h4', align: 'left' }}
               title={location.title}
             ></CardHeader>
-            {/* <CardMedia className={classes.cardmedia}
-              src={require("./imgs/" + String(index % 7) + ".jpg")}
+            <CardMedia className={classes.cardmedia}
+              image={location.image}
               // image="https://media.ethicalads.io/media/images/2020/12/ea-logo.png"
               title="Folder Img"
             >
-            </CardMedia> */}
-            <CardContent className={classes.cardimgbox}>
-              <img src = {require("./imgs/" + String(index % 7) + ".jpg")} />
-            </CardContent>
+            </CardMedia>
+            {/* <CardContent className={classes.cardimgbox}>
+              <img src={imgs[index % 7]} />
+            </CardContent> */}
             <CardContent >
               <Typography
                 variant="body2"

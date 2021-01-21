@@ -28,6 +28,7 @@ export function AddLocationDialog(props) {
   const [title, setTitle] = useState("");
   const [subpath, setSubPath] = useState("");
   const [description, setDescription] = useState("");
+  const [src, setSrc] = useState("")
   const classes = useStyles();
   const auth = React.useContext(AuthContext)
   const { enqueueSnackbar } = useSnackbar();
@@ -49,6 +50,7 @@ export function AddLocationDialog(props) {
       title: title,
       path: currentPath + "/" + subpath,
       description: description,
+      image: src,
       template: "",
       time: getTimeString(),
       username: auth.name,
@@ -74,6 +76,13 @@ export function AddLocationDialog(props) {
             InputProps={{
               startAdornment: <InputAdornment position="start">{currentPath + "/"}</InputAdornment>
             }} />
+        </ListItem>
+        <ListItem>
+          <TextField
+            id="src"
+            label="Src for image"
+            onChange={(event) => { setSrc(event.target.value) }}
+          />
         </ListItem>
         <ListItem>
           <TextField
