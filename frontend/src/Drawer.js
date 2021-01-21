@@ -10,9 +10,11 @@ import {
   Divider, IconButton, ListItem, ListItemIcon, ListItemText,
   Avatar, DialogTitle, Dialog, ListItemAvatar,
 } from '@material-ui/core';
-import { Menu, ChevronLeft, ChevronRight, Add, Home, Room, FormatListNumbered, Error, ArrowBack } from '@material-ui/icons'
+import { 
+  Menu, ChevronLeft, ChevronRight, Add, Home, Room, 
+  FormatListNumbered, Error, ArrowBack 
+} from '@material-ui/icons'
 import { Link, Switch, Route, Redirect, useHistory } from "react-router-dom"
-// import { sendData } from './useSend'
 import { message, Button, Input } from 'antd'
 import MainArea from './MainArea'
 import { pathList } from './testcases'

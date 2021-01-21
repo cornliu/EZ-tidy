@@ -21,8 +21,8 @@ export const getLocationData = async (path) => {
     const res = await instance.post("/query", { path: path });
     data = res.data;
   } catch (err) {
-      status = "error";
-      data = err.response;
+    status = "error";
+    data = err.response.data;
   } finally {
     return {
       status: status,
@@ -38,8 +38,8 @@ export const addItemToServer = async (item) => {
     const res = await instance.post("/add/item", item);
     data = res.data;
   } catch (err) {
-      status = "error";
-      data = err.response;
+    status = "error";
+    data = err.response.data;
   } finally {
     return {
       status: status,
@@ -55,8 +55,8 @@ export const addLocationToServer = async (location) => {
     const res = await instance.post("/add/location", location);
     data = res.data;
   } catch (err) {
-      status = "error";
-      data = err.response;
+    status = "error";
+    data = err.response.data;
   } finally {
     return {
       status: status,
@@ -72,9 +72,15 @@ export const loginToServer = async (user) => {
     const res = await instance.post("/check", user);
     data = res.data;
   } catch (err) {
-      status = "error";
-      data = err.response;
+    status = "error";
+    data = err.response.data;
+    if (data === false) {
+      data = " Failed: Wrong Password. ";
+    }
   } finally {
+    if (data === true) {
+      data = "Login Successfully.";
+    }
     return {
       status: status,
       data: data
@@ -89,8 +95,8 @@ export const addUserToServer = async (user) => {
     const res = await instance.post("/add/user", user);
     data = res.data;
   } catch (err) {
-      status = "error";
-      data = err.response;
+    status = "error";
+    data = err.response.data;
   } finally {
     return {
       status: status,
@@ -106,8 +112,8 @@ export const deleteItems = async (req) => {
     const res = await instance.post("/remove/item", req);
     data = res.data;
   } catch (err) {
-      status = "error";
-      data = err.response;
+    status = "error";
+    data = err.response.data;
   } finally {
     return {
       status: status,
@@ -123,8 +129,8 @@ export const deleteLocation = async (req) => {
     const res = await instance.post("/remove/location", req);
     data = res.data;
   } catch (err) {
-      status = "error";
-      data = err.response;
+    status = "error";
+    data = err.response.data;
   } finally {
     return {
       status: status,
