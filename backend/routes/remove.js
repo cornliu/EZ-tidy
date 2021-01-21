@@ -9,11 +9,17 @@ router.post('/item', async (req, res) => {
     const checkitem = await Item.findOne({ _id: req.body.itemlist[0] }).populate('owner')
     if (checkitem.owner.name === 'Admin' && req.body.identity === 'User') {
         for (let i = 0; i < req.body.itemlist.length; i++) {
-            let item = await Item.findOne({ _id: req.body.itemlist[i] }).populate('owner')
-            await item.update({ borrower: req.body.username },(err)=>{
-                if (err) console.log(err);
-            })
-            return res.status(200).send('Borrow success')
+            if (checkitem.borrower !== ' ') {
+                return res.status(405).send('This item is already borrowed.')
+            }
+            else {
+                let item = await Item.findOne({ _id: req.body.itemlist[i] }).populate('owner')
+                await item.update({ borrower: req.body.username }, (err) => {
+                    if (err) console.log(err);
+                })
+                return res.status(200).send('Borrow success')
+            }
+
         }
     }
     else {
