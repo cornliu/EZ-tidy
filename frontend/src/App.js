@@ -9,7 +9,7 @@ function App() {
   const [auth, setAuth] = React.useState({
     haslogin: false,
     name: '',
-    password: '',
+    password: '', 
     identity: "User"
   });
   const {reload, setReload} = React.useState(false)

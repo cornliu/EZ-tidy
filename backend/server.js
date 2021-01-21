@@ -10,7 +10,6 @@ import Addrouter from './routes/add.js'
 import Removerouter from './routes/remove.js'
 import Queryrouter from './routes/query.js'
 import Checkrouter from './routes/accountcheck.js'
-import { exec } from 'child_process';
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000
