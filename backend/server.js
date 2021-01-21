@@ -10,9 +10,12 @@ import Addrouter from './routes/add.js'
 import Removerouter from './routes/remove.js'
 import Queryrouter from './routes/query.js'
 import Checkrouter from './routes/accountcheck.js'
+import path from 'path'
 dotenv.config();
 const app = express();
-app.use(express.static(__dirname + '/../frontend/build'));
+const __dirname = path.resolve(path.dirname(''));
+console.log('path', __dirname + '/frontend/build')
+app.use(express.static(__dirname + '/frontend/build'));
 const port = process.env.PORT || 4000
 
 if (!process.env.MONGO_URL) {
