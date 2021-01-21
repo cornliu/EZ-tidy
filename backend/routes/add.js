@@ -3,6 +3,18 @@ import Item from '../models/item.js'
 import Location from '../models/location.js'
 import User from '../models/user.js'
 const router = express.Router()
+router.post('/returnitem', async (req, res) => {
+    const item = await Item.findOne({ _id: req.body.id })
+    if (item.borrower === req.body.username || req.body.username === 'Admin') {
+        await item.update({borrower: ' '})
+        return res.status(200).send('Return success')
+    }
+    else{
+        console.log('You are not the borrower of this item');
+        return res.status(406).send('You are not the borrower of this item')
+    }
+})
+
 router.post('/item', async (req, res) => {
     if (req.body.path === '/') {
         return res.status(405).send("You can't put any item in the root.")
@@ -26,14 +38,21 @@ router.post('/item', async (req, res) => {
             name: req.body.name,
             time: req.body.time,
             description: req.body.description,
+            borrower: ' ',
             owner: user._id
         })
+        console.log(item);
         await item.save((err) => {
-            console.log(`item ${item._id} is saved`);
+            if(err) console.log(err);
         })
-        // await Location.updateOne({ path: loc.path }, { $set: { itemlist: [...loc.itemlist, item._id], template: "ShelfTable" } })
-        await loc.update({ itemlist: [...loc.itemlist, item._id], template: "ShelfTable" })
-        return res.status(200).send(`item ${req.body.name} is saved`)
+        if (req.body.owner === 'Admin') {
+            await loc.update({ commonitemlist: [...loc.commonitemlist, item._id], template: "ShelfTable" })
+            return res.status(200).send(`item ${req.body.name} is saved in the commonitemlist`)
+        }
+        else {
+            await loc.update({ itemlist: [...loc.itemlist, item._id], template: "ShelfTable" })
+            return res.status(200).send(`item ${req.body.name} is saved int the itemlist`)
+        }
     }
 })
 router.post('/location', async (req, res) => {
@@ -49,7 +68,7 @@ router.post('/location', async (req, res) => {
             console.log(`${location.path} has been created`);
             return res.status(404).send(`Path ${location.path} has been created`)
         }
-        else if (par.itemlist.length > 0) {
+        else if (par.itemlist.length > 0 || par.commonitemlist.length > 0) {
             console.log(`Itemlist is not empty, you can't add location in this location.`);
             return res.status(405).send(`Itemlist is not empty, you can't add location in this location.`)
         }
@@ -61,14 +80,15 @@ router.post('/location', async (req, res) => {
                 description: req.body.description,
                 path: req.body.path,
                 locationlist: [],
-                itemlist: []
+                itemlist: [],
+                commonitemlist: []
             })
             await loc.save((err) => {
                 if (err) console.error(err);
                 console.log(`${req.body.title} is created`);
             })
-            console.log([...par.locationlist, loc._id]);
-            console.log(par);
+            // console.log([...par.locationlist, loc._id]);
+            // console.log(par);
             // Location.updateOne({ path: req.body.parentpath }, { $set: { locationlist: [...par.locationlist, loc._id], template: "Location" } })
             await par.update({ locationlist: [...par.locationlist, loc._id], template: "Location" })
             return res.status(200).send(`Location ${req.body.title} is saved`)
