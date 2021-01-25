@@ -6,16 +6,19 @@ const router = express.Router()
 router.post('/returnitem', async (req, res) => {
     const item = await Item.findOne({ _id: req.body.id })
     if (item.borrower === req.body.username || req.body.username === 'Admin') {
-        await item.update({borrower: ' '})
+        await item.update({ borrower: ' ' })
         return res.status(200).send('Return success')
     }
-    else{
+    else {
         console.log('You are not the borrower of this item');
         return res.status(406).send('You are not the borrower of this item')
     }
 })
 
 router.post('/item', async (req, res) => {
+    if (req.body.name === ''||req.body.name === undefined){
+        return res.status(405).send('Something is missing')
+    }
     if (req.body.path === '/') {
         return res.status(405).send("You can't put any item in the root.")
     }
@@ -43,7 +46,7 @@ router.post('/item', async (req, res) => {
         })
         console.log(item);
         await item.save((err) => {
-            if(err) console.log(err);
+            if (err) console.log(err);
         })
         if (req.body.owner === 'Admin') {
             await loc.update({ commonitemlist: [...loc.commonitemlist, item._id], template: "ShelfTable" })
@@ -56,7 +59,10 @@ router.post('/item', async (req, res) => {
     }
 })
 router.post('/location', async (req, res) => {
-    const user = await User.findOne({ name: req.body.username })
+    if (req.body.title === '' || req.body.title === undefined){
+        return res.status(405).send('Something is missing')
+    }
+        const user = await User.findOne({ name: req.body.username })
     if (user.identity === 'Admin') {
         const par = await Location.findOne({ path: req.body.parentpath })
         if (!par) {
@@ -74,7 +80,7 @@ router.post('/location', async (req, res) => {
         }
         else {
             let image = 'https://www.popdaily.com.tw/shaper/wp-content/uploads/2019/01/5pn9cgij8ko4c0wk884kksg0oqdtbs2-1000x626.jpg'
-            if (req.body.image !== ''){
+            if (req.body.image !== '') {
                 image = req.body.image
             }
             const loc = new Location({
@@ -106,6 +112,11 @@ router.post('/location', async (req, res) => {
 
 })
 router.post('/user', async (req, res) => {
+    console.log(req.body.name);
+    console.log(req.body.password);
+    if (req.body.name === '' || req.body.password === '' || req.body.name === undefined || req.body.password === undefined) {
+        return res.status(405).send('Something is missing.')
+    }
     const user = await User.findOne({ name: req.body.name })
     if (user) {
         console.log(`${user.name} has been created!!`);
